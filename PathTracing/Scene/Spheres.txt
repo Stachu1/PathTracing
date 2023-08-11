@@ -1,0 +1,11 @@
+location:0,10,-15:
+radius:5:
+material:concrete_red:
+;
+location:20,20,-20:
+radius:10:
+material:glowing_white:
+;
+location:0,-995,-15:
+radius:1000:
+material:concrete_white:

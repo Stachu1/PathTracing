@@ -10,17 +10,17 @@ namespace PathTracing
 {
     internal class Camera
     {
-        public Vector3 location;
-        public Vector3 direction;
+        public Vector3 pos;
+        public Vector3 dir;
         public Size resolution;
         public float FOV;
         public float gamma;
         public Ray[,] rays;
 
-        public Camera(Vector3 location, Vector3 direction, Size resolution, float FOV, float gamma)
+        public Camera(Vector3 pos, Vector3 dir, Size resolution, float FOV, float gamma)
         {
-            this.location = location;
-            this.direction = direction;
+            this.pos = pos;
+            this.dir = dir;
             this.resolution = resolution;
             this.FOV = FOV;
             this.gamma = gamma;
@@ -39,7 +39,7 @@ namespace PathTracing
             {
                 for (int col = 0; col < resolution.Width; col++)
                 {
-                    rays[row, col] = new Ray(location, new Vector3(col - resolution.Width / 2, -row + resolution.Height / 2, z));
+                    rays[row, col] = new Ray(pos, new Vector3(col - resolution.Width / 2, -row + resolution.Height / 2, z));
                 }
             }
         }

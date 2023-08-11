@@ -14,12 +14,12 @@ namespace PathTracing
     public partial class Form1 : Form
     {
         Scene scene = new Scene();
-        Vector3 cam_location = new Vector3(0, 10, 0);
-        Vector3 cam_direction = new Vector3(0, 0, -1);
-        //Size cam_resolution = new Size(400, 225);
+        Vector3 cam_pos = new Vector3(0, 10, 0);
+        Vector3 cam_dir = new Vector3(0, 0, -1);
+        Size cam_resolution = new Size(400, 225);
         //Size cam_resolution = new Size(1600, 900);
         //Size cam_resolution = new Size(2560, 1440);
-        Size cam_resolution = new Size(3200, 1800);
+        //Size cam_resolution = new Size(3200, 1800);
         float FOV = (float)Math.PI / 2;
         float gamma = 2.2F;
 
@@ -58,13 +58,13 @@ namespace PathTracing
 
         private void button1_Click(object sender, EventArgs e)
         {
-            scene.camera = new Camera(cam_location, cam_direction, cam_resolution, FOV, gamma);
+            scene.camera = new Camera(cam_pos, cam_dir, cam_resolution, FOV, gamma);
             scene.camera.Load();
             scene.img = new Bitmap(cam_resolution.Width, cam_resolution.Height);
             Graphics g = Graphics.FromImage(scene.img);
             g.FillRectangle(new SolidBrush(Color.Black), 0, 0, cam_resolution.Width, cam_resolution.Height);
-            scene.Load_materials();
-            scene.Load_spheres();
+            scene.LoadMaterials();
+            scene.LoadSpheres();
             progressBar1.Value = 100;
             scene.loaded = true;
         }

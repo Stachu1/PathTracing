@@ -10,13 +10,13 @@ namespace PathTracing
 {
     internal class Ray
     {
-        public Vector3 location;
-        public Vector3 direction;
+        public Vector3 pos;
+        public Vector3 dir;
 
-        public Ray(Vector3 location, Vector3 direction)
+        public Ray(Vector3 pos, Vector3 dir)
         {
-            this.location = location;
-            this.direction = Vector3.Normalize(direction);
+            this.pos = pos;
+            this.dir = Vector3.Normalize(dir);
         }
     }
 }

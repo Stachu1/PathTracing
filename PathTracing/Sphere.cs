@@ -11,13 +11,13 @@ namespace PathTracing
 {
     internal class Sphere
     {
-        public Vector3 location;
+        public Vector3 pos;
         public float radius;
         public Material material;
 
-        public Sphere(Vector3 location, float radius, Material material)
+        public Sphere(Vector3 pos, float radius, Material material)
         {
-            this.location = location;
+            this.pos = pos;
             this.radius = radius;
             this.material = material;
         }

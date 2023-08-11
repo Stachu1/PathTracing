@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntersectionInfo.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="Camera.cs" />
