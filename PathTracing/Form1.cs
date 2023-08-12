@@ -16,6 +16,7 @@ namespace PathTracing
         Scene scene = new Scene();
         Vector3 cam_pos = new Vector3(0, 10, 0);
         Vector3 cam_dir = new Vector3(0, 0, -1);
+
         Size cam_resolution = new Size(400, 225);
         //Size cam_resolution = new Size(1600, 900);
         //Size cam_resolution = new Size(2560, 1440);
@@ -47,12 +48,13 @@ namespace PathTracing
             if (pictureBox1.Width < 2 ||  pictureBox1.Height < 2) return;
 
             Graphics g = e.Graphics;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
             g.DrawRectangle(new Pen(Color.White, 1), 0, 0, pictureBox1.Width-1, pictureBox1.Height-1);
 
-            if (scene.img != null)
+            if (scene.img_to_show != null)
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                g.DrawImage(new Bitmap(scene.img, pictureBox1.Width-2, pictureBox1.Height-2), 1, 1);
+                g.DrawImage(new Bitmap(scene.img_to_show, pictureBox1.Width - 2, pictureBox1.Height - 2), 1, 1);
             }
         }
 
@@ -60,9 +62,9 @@ namespace PathTracing
         {
             scene.camera = new Camera(cam_pos, cam_dir, cam_resolution, FOV, gamma);
             scene.camera.Load();
-            scene.img = new Bitmap(cam_resolution.Width, cam_resolution.Height);
-            Graphics g = Graphics.FromImage(scene.img);
-            g.FillRectangle(new SolidBrush(Color.Black), 0, 0, cam_resolution.Width, cam_resolution.Height);
+            scene.total_iterations = 0;
+            scene.img = new Vector3[cam_resolution.Height, cam_resolution.Width];
+            scene.FillArray(ref scene.img, Vector3.Zero);
             scene.LoadMaterials();
             scene.LoadSpheres();
             progressBar1.Value = 100;
@@ -71,7 +73,7 @@ namespace PathTracing
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (scene.loaded)
+            if (scene.loaded && !scene.rendering)
             {
                 Thread thread = new Thread(scene.Render);
                 thread.Start();
@@ -87,7 +89,6 @@ namespace PathTracing
                 if (progressBar2.Value == 100)
                 {
                     scene.rendering = false;
-                    
                 }
             }
 
@@ -103,11 +104,11 @@ namespace PathTracing
             {
                 if (textBox1.Text.Contains("."))
                 {
-                    scene.img.Save(textBox1.Text);
+                    scene.img_to_show.Save(textBox1.Text);
                 }
                 else
                 {
-                    scene.img.Save(textBox1.Text + ".bmp");
+                    scene.img_to_show.Save(textBox1.Text + ".bmp");
                 }
             }
         }

@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace PathTracing
 {
-    internal class Ray
+    internal class Ray: ICloneable
     {
         public Vector3 pos;
         public Vector3 dir;
@@ -17,6 +17,11 @@ namespace PathTracing
         {
             this.pos = pos;
             this.dir = Vector3.Normalize(dir);
+        }
+
+        public object Clone()
+        {
+            return new Ray(pos, dir);
         }
     }
 }

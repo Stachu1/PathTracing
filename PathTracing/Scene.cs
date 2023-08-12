@@ -8,13 +8,15 @@ using System.Drawing;
 using System.Numerics;
 using System.IO;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
 
 namespace PathTracing
 {
     internal class Scene
     {
         public Camera camera;
-        public Image img;
+        public Vector3[,] img;
+        public Bitmap img_to_show;
 
         List<Material> materials = new List<Material>();
         List<Sphere> spheres = new List<Sphere>();
@@ -77,27 +79,98 @@ namespace PathTracing
             }
         }
 
-        public void Render()
+
+        public void FillArray(ref Vector3[,] array, Vector3 value)
         {
-            Graphics g = Graphics.FromImage(img);
-            for (int row = 0; row < camera.resolution.Height; row++)
+            int num_rows = array.GetLength(0);
+            int num_cols = array.GetLength(1);
+
+            for (int row = 0; row < num_rows; row++)
             {
-                render_progress = (float)row / (float)camera.resolution.Height;   
-                for (int col = 0; col < camera.resolution.Width; col++)
+                for (int col = 0; col < num_cols; col++)
                 {
-                    Color color = TraceRay(camera.rays[row, col]);
-                    g.FillRectangle(new SolidBrush(color), col, row, 1, 1);
+                    array[row, col] = value;
                 }
             }
-            render_progress = 1;
         }
 
-        private Color TraceRay(Ray ray)
+
+        public Bitmap ArrayToImage(Vector3[,] array)
+        {
+            
+            int num_rows = array.GetLength(0);
+            int num_cols = array.GetLength(1);
+
+            Bitmap bmp = new Bitmap(num_cols, num_rows);
+
+            for (int row = 0; row < num_rows; row++)
+            {
+                for (int col = 0; col < num_cols; col++)
+                {
+                    Vector3 vec_color = array[row, col];
+
+                    float max_value = vec_color.X;
+                    if (vec_color.Y > max_value)
+                    {
+                        max_value = vec_color.Y;
+                    }
+                    if (vec_color.Z > max_value)
+                    {
+                        max_value = vec_color.Z;
+                    }
+                    if (max_value > 1)
+                    {
+                        vec_color = vec_color / max_value;
+                    }
+
+                    Color color = Color.FromArgb((int)(vec_color.X*255.0f), (int)(vec_color.Y * 255.0f), (int)(vec_color.Z * 255.0f));
+                    bmp.SetPixel(col, row, color);
+                }
+            }
+            return bmp;
+        }
+
+
+        public void Render()
+        {
+            for (int iteration = 0; iteration < iteretions_per_render; iteration++)
+            {
+                for (int row = 0; row < camera.resolution.Height; row++)
+                {
+                    render_progress = ((float)iteration  + (float)row / (float)camera.resolution.Height) / (float)iteretions_per_render;
+                    for (int col = 0; col < camera.resolution.Width; col++)
+                    {
+                        Ray ray = (Ray) camera.rays[row, col].Clone();
+
+                        //Vector3 total_incoming_light = Vector3.Zero;
+                        //for (int ray_index = 0; ray_index < 50; ray_index++)
+                        //{
+
+                        //    total_incoming_light += TraceRay(ray);
+                        //}
+                        //Vector3 new_color = total_incoming_light / 50;
+
+                        Vector3 new_color = TraceRay(ray);
+                        Vector3 old_color = img[row, col];
+
+                        float weight = 1.0f / (total_iterations + 1);
+                        Vector3 accum_average_color = old_color * (1 - weight) + new_color * weight;
+                        img[row, col] = accum_average_color;
+                    }
+                }
+                total_iterations++;
+                img_to_show = ArrayToImage(img);
+            }
+            render_progress = 1;
+            
+        }
+
+        private Vector3 TraceRay(Ray ray)
         {
             Vector3 ray_color = Vector3.One;
             Vector3 incoming_light = Vector3.Zero;
 
-            for (int relection = 0; relection < max_ray_reflections; relection++)
+            for (int reflection = 0; reflection < max_ray_reflections; reflection++)
             {
                 IntersectionInfo info = CalculateRayCollision(ray);
                 if (info.isIntersecting)
@@ -105,15 +178,7 @@ namespace PathTracing
                     ray.pos = info.pos;
                     ray.dir = CalculateReflection(ray.dir, info.normal, info.material);
 
-                    if (info.material.glow > 0)
-                    {
-                        Vector3 emitted_light = info.material.color * info.material.glow;
-                        incoming_light = emitted_light * ray_color;
-                        break;
-                    }
-
-                    //vector3 emitted_light = info.material.color * info.material.glow;
-                    //incoming_light += emitted_light * ray_color;
+                    incoming_light += info.material.color * info.material.glow * ray_color;
                     ray_color *= info.material.color;
 
                 }
@@ -123,7 +188,7 @@ namespace PathTracing
                 }
             }
 
-            return Color.FromArgb((int)(incoming_light.X*255), (int)(incoming_light.Y * 255), (int)(incoming_light.Z * 255));
+            return incoming_light;
 
             ///// Ground
             //if (ray.dir.Y < 0)
@@ -145,7 +210,12 @@ namespace PathTracing
             float x = RandomValueNormDistr();
             float y = RandomValueNormDistr();
             float z = RandomValueNormDistr();
-            return Vector3.Normalize(new Vector3(x, y, z));
+            Vector3 vec = Vector3.Normalize(new Vector3(x, y, z));
+            if (Math.Acos(Vector3.Dot(vec, normal)) > Math.PI / 3.0)
+            {
+                vec = Vector3.Negate(vec);
+            }
+            return vec;
         }
 
 
