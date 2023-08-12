@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Numerics;
+using System.IO;
 
 namespace PathTracing
 {
@@ -31,6 +32,14 @@ namespace PathTracing
         public Form1()
         {
             InitializeComponent();
+
+            scene.camera = new Camera(cam_pos, cam_dir, cam_resolution, FOV, gamma);
+            scene.total_iterations = 0;
+            scene.img = new Vector3[cam_resolution.Height, cam_resolution.Width];
+            scene.FillArray(ref scene.img, Vector3.Zero);
+            scene.LoadMaterials();
+            scene.LoadSpheres();
+            scene.loaded = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -60,15 +69,11 @@ namespace PathTracing
 
         private void button1_Click(object sender, EventArgs e)
         {
-            scene.camera = new Camera(cam_pos, cam_dir, cam_resolution, FOV, gamma);
-            scene.camera.Load();
             scene.total_iterations = 0;
             scene.img = new Vector3[cam_resolution.Height, cam_resolution.Width];
             scene.FillArray(ref scene.img, Vector3.Zero);
             scene.LoadMaterials();
             scene.LoadSpheres();
-            progressBar1.Value = 100;
-            scene.loaded = true;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -85,8 +90,8 @@ namespace PathTracing
         {
             if (scene.rendering)
             {
-                progressBar2.Value = (int)(scene.render_progress * 100);
-                if (progressBar2.Value == 100)
+                progressBar1.Value = (int)(scene.render_progress * 100);
+                if (progressBar1.Value == 100)
                 {
                     scene.rendering = false;
                 }
@@ -102,13 +107,17 @@ namespace PathTracing
         {
             if (!scene.rendering && scene.loaded)
             {
+                if (!Directory.Exists("Renders"))
+                {
+                    Directory.CreateDirectory("Renders");
+                }
                 if (textBox1.Text.Contains("."))
                 {
-                    scene.img_to_show.Save(textBox1.Text);
+                    scene.img_to_show.Save("Renders\\" + textBox1.Text);
                 }
                 else
                 {
-                    scene.img_to_show.Save(textBox1.Text + ".bmp");
+                    scene.img_to_show.Save("Renders\\" + textBox1.Text + ".bmp");
                 }
             }
         }

@@ -140,15 +140,15 @@ namespace PathTracing
                     render_progress = ((float)iteration  + (float)row / (float)camera.resolution.Height) / (float)iteretions_per_render;
                     for (int col = 0; col < camera.resolution.Width; col++)
                     {
-                        Ray ray = (Ray) camera.rays[row, col].Clone();
+                        Ray ray = camera.GetRay(row, col);
 
+                        //int raysPerPixlRender = 30;
                         //Vector3 total_incoming_light = Vector3.Zero;
-                        //for (int ray_index = 0; ray_index < 50; ray_index++)
+                        //for (int ray_index = 0; ray_index < raysPerPixlRender; ray_index++)
                         //{
-
-                        //    total_incoming_light += TraceRay(ray);
+                        //    total_incoming_light += TraceRay((Ray) ray.Clone());
                         //}
-                        //Vector3 new_color = total_incoming_light / 50;
+                        //Vector3 new_color = total_incoming_light / raysPerPixlRender;
 
                         Vector3 new_color = TraceRay(ray);
                         Vector3 old_color = img[row, col];

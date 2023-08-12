@@ -26,6 +26,13 @@ namespace PathTracing
             this.gamma = gamma;
         }
 
+
+        public Ray GetRay(int row, int col)
+        {
+            float z = -(resolution.Width / 2) / (float)Math.Tan(FOV / 2);
+            return new Ray(pos, new Vector3(col - resolution.Width / 2, -row + resolution.Height / 2, z));
+        }
+
         public void Load()
         {
             rays = new Ray[resolution.Height, resolution.Width];
