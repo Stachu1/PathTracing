@@ -30,20 +30,23 @@
         {
             components = new System.ComponentModel.Container();
             pictureBox1 = new PictureBox();
-            button1 = new Button();
-            button2 = new Button();
+            ResetButton = new Button();
+            RenderButton = new Button();
             timer1 = new System.Windows.Forms.Timer(components);
             progressBar1 = new ProgressBar();
-            button3 = new Button();
-            textBox1 = new TextBox();
-            numericUpDown1 = new NumericUpDown();
-            textBox2 = new TextBox();
-            textBox3 = new TextBox();
-            numericUpDown2 = new NumericUpDown();
-            textBox4 = new TextBox();
+            SaveButton = new Button();
+            FileNameTextBox = new TextBox();
+            MaxReflectionsnumericUpDown = new NumericUpDown();
+            MaxReflectionsTextBox = new TextBox();
+            IterationsPerRendertextBox = new TextBox();
+            IterationsPerRendernumericUpDown = new NumericUpDown();
+            IterationsTextBox = new TextBox();
+            KeepImgUpdated = new CheckBox();
+            ETATextBox = new TextBox();
+            LoadButton = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MaxReflectionsnumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)IterationsPerRendernumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -57,33 +60,33 @@
             pictureBox1.TabStop = false;
             pictureBox1.Paint += pictureBox1_Paint;
             // 
-            // button1
+            // ResetButton
             // 
-            button1.BackColor = Color.FromArgb(64, 64, 64);
-            button1.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(12, 15);
-            button1.Margin = new Padding(3, 4, 3, 4);
-            button1.Name = "button1";
-            button1.Size = new Size(264, 112);
-            button1.TabIndex = 1;
-            button1.Text = "Reset";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            ResetButton.BackColor = Color.FromArgb(64, 64, 64);
+            ResetButton.Font = new Font("Microsoft Sans Serif", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point);
+            ResetButton.ForeColor = Color.White;
+            ResetButton.Location = new Point(12, 15);
+            ResetButton.Margin = new Padding(3, 4, 3, 4);
+            ResetButton.Name = "ResetButton";
+            ResetButton.Size = new Size(264, 112);
+            ResetButton.TabIndex = 1;
+            ResetButton.Text = "Reset";
+            ResetButton.UseVisualStyleBackColor = false;
+            ResetButton.Click += ResetButton_Click;
             // 
-            // button2
+            // RenderButton
             // 
-            button2.BackColor = Color.FromArgb(64, 64, 64);
-            button2.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(12, 135);
-            button2.Margin = new Padding(3, 4, 3, 4);
-            button2.Name = "button2";
-            button2.Size = new Size(264, 112);
-            button2.TabIndex = 2;
-            button2.Text = "Render";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            RenderButton.BackColor = Color.FromArgb(64, 64, 64);
+            RenderButton.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point);
+            RenderButton.ForeColor = Color.White;
+            RenderButton.Location = new Point(12, 135);
+            RenderButton.Margin = new Padding(3, 4, 3, 4);
+            RenderButton.Name = "RenderButton";
+            RenderButton.Size = new Size(264, 112);
+            RenderButton.TabIndex = 2;
+            RenderButton.Text = "Render";
+            RenderButton.UseVisualStyleBackColor = false;
+            RenderButton.Click += RenderButton_Click;
             // 
             // timer1
             // 
@@ -99,129 +102,177 @@
             progressBar1.Size = new Size(264, 25);
             progressBar1.TabIndex = 4;
             // 
-            // button3
+            // SaveButton
             // 
-            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            button3.BackColor = Color.FromArgb(64, 64, 64);
-            button3.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(166, 852);
-            button3.Margin = new Padding(3, 4, 3, 4);
-            button3.Name = "button3";
-            button3.Size = new Size(110, 62);
-            button3.TabIndex = 6;
-            button3.Text = "Save";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            SaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            SaveButton.BackColor = Color.FromArgb(64, 64, 64);
+            SaveButton.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            SaveButton.ForeColor = Color.White;
+            SaveButton.Location = new Point(12, 855);
+            SaveButton.Margin = new Padding(3, 4, 3, 4);
+            SaveButton.Name = "SaveButton";
+            SaveButton.Size = new Size(130, 62);
+            SaveButton.TabIndex = 6;
+            SaveButton.Text = "Save";
+            SaveButton.UseVisualStyleBackColor = false;
+            SaveButton.Click += SaveButton_Click;
             // 
-            // textBox1
+            // FileNameTextBox
             // 
-            textBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            textBox1.BackColor = Color.FromArgb(64, 64, 64);
-            textBox1.BorderStyle = BorderStyle.None;
-            textBox1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            textBox1.ForeColor = Color.White;
-            textBox1.Location = new Point(12, 868);
-            textBox1.Margin = new Padding(3, 4, 3, 4);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(148, 23);
-            textBox1.TabIndex = 7;
-            textBox1.Text = "Render.bmp";
+            FileNameTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            FileNameTextBox.BackColor = Color.FromArgb(64, 64, 64);
+            FileNameTextBox.BorderStyle = BorderStyle.None;
+            FileNameTextBox.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            FileNameTextBox.ForeColor = Color.White;
+            FileNameTextBox.Location = new Point(12, 824);
+            FileNameTextBox.Margin = new Padding(3, 4, 3, 4);
+            FileNameTextBox.Name = "FileNameTextBox";
+            FileNameTextBox.Size = new Size(270, 23);
+            FileNameTextBox.TabIndex = 7;
+            FileNameTextBox.Text = "Render.bmp";
             // 
-            // numericUpDown1
+            // MaxReflectionsnumericUpDown
             // 
-            numericUpDown1.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            numericUpDown1.Location = new Point(218, 354);
-            numericUpDown1.Margin = new Padding(3, 4, 3, 4);
-            numericUpDown1.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(58, 27);
-            numericUpDown1.TabIndex = 8;
-            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            MaxReflectionsnumericUpDown.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            MaxReflectionsnumericUpDown.Location = new Point(218, 391);
+            MaxReflectionsnumericUpDown.Margin = new Padding(3, 4, 3, 4);
+            MaxReflectionsnumericUpDown.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
+            MaxReflectionsnumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            MaxReflectionsnumericUpDown.Name = "MaxReflectionsnumericUpDown";
+            MaxReflectionsnumericUpDown.Size = new Size(58, 27);
+            MaxReflectionsnumericUpDown.TabIndex = 8;
+            MaxReflectionsnumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // textBox2
+            // MaxReflectionsTextBox
             // 
-            textBox2.BackColor = Color.FromArgb(64, 64, 64);
-            textBox2.BorderStyle = BorderStyle.None;
-            textBox2.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            textBox2.ForeColor = Color.White;
-            textBox2.ImeMode = ImeMode.NoControl;
-            textBox2.Location = new Point(12, 354);
-            textBox2.Margin = new Padding(3, 4, 3, 4);
-            textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
-            textBox2.Size = new Size(200, 20);
-            textBox2.TabIndex = 9;
-            textBox2.Text = "Max ray reflections";
-            textBox2.TextAlign = HorizontalAlignment.Center;
+            MaxReflectionsTextBox.BackColor = Color.FromArgb(64, 64, 64);
+            MaxReflectionsTextBox.BorderStyle = BorderStyle.None;
+            MaxReflectionsTextBox.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            MaxReflectionsTextBox.ForeColor = Color.White;
+            MaxReflectionsTextBox.ImeMode = ImeMode.NoControl;
+            MaxReflectionsTextBox.Location = new Point(12, 391);
+            MaxReflectionsTextBox.Margin = new Padding(3, 4, 3, 4);
+            MaxReflectionsTextBox.Name = "MaxReflectionsTextBox";
+            MaxReflectionsTextBox.ReadOnly = true;
+            MaxReflectionsTextBox.Size = new Size(200, 27);
+            MaxReflectionsTextBox.TabIndex = 9;
+            MaxReflectionsTextBox.Text = "Max ray reflections";
+            MaxReflectionsTextBox.TextAlign = HorizontalAlignment.Center;
             // 
-            // textBox3
+            // IterationsPerRendertextBox
             // 
-            textBox3.BackColor = Color.FromArgb(64, 64, 64);
-            textBox3.BorderStyle = BorderStyle.None;
-            textBox3.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            textBox3.ForeColor = Color.White;
-            textBox3.ImeMode = ImeMode.NoControl;
-            textBox3.Location = new Point(12, 401);
-            textBox3.Margin = new Padding(3, 4, 3, 4);
-            textBox3.Name = "textBox3";
-            textBox3.ReadOnly = true;
-            textBox3.Size = new Size(200, 20);
-            textBox3.TabIndex = 10;
-            textBox3.Text = "Iterations per render";
-            textBox3.TextAlign = HorizontalAlignment.Center;
+            IterationsPerRendertextBox.BackColor = Color.FromArgb(64, 64, 64);
+            IterationsPerRendertextBox.BorderStyle = BorderStyle.None;
+            IterationsPerRendertextBox.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            IterationsPerRendertextBox.ForeColor = Color.White;
+            IterationsPerRendertextBox.ImeMode = ImeMode.NoControl;
+            IterationsPerRendertextBox.Location = new Point(12, 426);
+            IterationsPerRendertextBox.Margin = new Padding(3, 4, 3, 4);
+            IterationsPerRendertextBox.Name = "IterationsPerRendertextBox";
+            IterationsPerRendertextBox.ReadOnly = true;
+            IterationsPerRendertextBox.Size = new Size(200, 27);
+            IterationsPerRendertextBox.TabIndex = 10;
+            IterationsPerRendertextBox.Text = "Iterations / render";
+            IterationsPerRendertextBox.TextAlign = HorizontalAlignment.Center;
             // 
-            // numericUpDown2
+            // IterationsPerRendernumericUpDown
             // 
-            numericUpDown2.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            numericUpDown2.Location = new Point(218, 401);
-            numericUpDown2.Margin = new Padding(3, 4, 3, 4);
-            numericUpDown2.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
-            numericUpDown2.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new Size(58, 27);
-            numericUpDown2.TabIndex = 11;
-            numericUpDown2.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            IterationsPerRendernumericUpDown.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            IterationsPerRendernumericUpDown.Location = new Point(218, 426);
+            IterationsPerRendernumericUpDown.Margin = new Padding(3, 4, 3, 4);
+            IterationsPerRendernumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            IterationsPerRendernumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            IterationsPerRendernumericUpDown.Name = "IterationsPerRendernumericUpDown";
+            IterationsPerRendernumericUpDown.Size = new Size(58, 27);
+            IterationsPerRendernumericUpDown.TabIndex = 11;
+            IterationsPerRendernumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // textBox4
+            // IterationsTextBox
             // 
-            textBox4.BackColor = Color.FromArgb(64, 64, 64);
-            textBox4.BorderStyle = BorderStyle.None;
-            textBox4.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            textBox4.ForeColor = Color.White;
-            textBox4.Location = new Point(12, 308);
-            textBox4.Margin = new Padding(3, 4, 3, 4);
-            textBox4.Name = "textBox4";
-            textBox4.ReadOnly = true;
-            textBox4.Size = new Size(264, 27);
-            textBox4.TabIndex = 12;
-            textBox4.Text = "Total iterations: 0";
-            textBox4.TextAlign = HorizontalAlignment.Center;
+            IterationsTextBox.BackColor = Color.FromArgb(64, 64, 64);
+            IterationsTextBox.BorderStyle = BorderStyle.None;
+            IterationsTextBox.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            IterationsTextBox.ForeColor = Color.White;
+            IterationsTextBox.Location = new Point(12, 323);
+            IterationsTextBox.Margin = new Padding(3, 4, 3, 4);
+            IterationsTextBox.Name = "IterationsTextBox";
+            IterationsTextBox.ReadOnly = true;
+            IterationsTextBox.Size = new Size(264, 27);
+            IterationsTextBox.TabIndex = 12;
+            IterationsTextBox.Text = "Total iterations: 0";
+            // 
+            // KeepImgUpdated
+            // 
+            KeepImgUpdated.AutoSize = true;
+            KeepImgUpdated.BackColor = Color.FromArgb(64, 64, 64);
+            KeepImgUpdated.Checked = true;
+            KeepImgUpdated.CheckState = CheckState.Checked;
+            KeepImgUpdated.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            KeepImgUpdated.ForeColor = Color.White;
+            KeepImgUpdated.Location = new Point(12, 357);
+            KeepImgUpdated.Margin = new Padding(8, 6, 6, 6);
+            KeepImgUpdated.Name = "KeepImgUpdated";
+            KeepImgUpdated.Size = new Size(194, 27);
+            KeepImgUpdated.TabIndex = 13;
+            KeepImgUpdated.Text = "Keep Image Updated";
+            KeepImgUpdated.UseVisualStyleBackColor = false;
+            KeepImgUpdated.CheckedChanged += KeepImgUpdated_CheckedChanged;
+            // 
+            // ETATextBox
+            // 
+            ETATextBox.BackColor = Color.FromArgb(64, 64, 64);
+            ETATextBox.BorderStyle = BorderStyle.None;
+            ETATextBox.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            ETATextBox.ForeColor = Color.White;
+            ETATextBox.Location = new Point(12, 288);
+            ETATextBox.Margin = new Padding(3, 4, 3, 4);
+            ETATextBox.Name = "ETATextBox";
+            ETATextBox.ReadOnly = true;
+            ETATextBox.Size = new Size(264, 27);
+            ETATextBox.TabIndex = 14;
+            ETATextBox.Text = "ETA: ";
+            // 
+            // LoadButton
+            // 
+            LoadButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            LoadButton.BackColor = Color.FromArgb(64, 64, 64);
+            LoadButton.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            LoadButton.ForeColor = Color.White;
+            LoadButton.Location = new Point(152, 855);
+            LoadButton.Margin = new Padding(3, 4, 3, 4);
+            LoadButton.Name = "LoadButton";
+            LoadButton.Size = new Size(130, 62);
+            LoadButton.TabIndex = 15;
+            LoadButton.Text = "Load";
+            LoadButton.UseVisualStyleBackColor = false;
+            LoadButton.Click += LoadButton_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1582, 930);
-            Controls.Add(textBox4);
-            Controls.Add(numericUpDown2);
-            Controls.Add(textBox3);
-            Controls.Add(textBox2);
-            Controls.Add(numericUpDown1);
-            Controls.Add(textBox1);
-            Controls.Add(button3);
+            Controls.Add(LoadButton);
+            Controls.Add(ETATextBox);
+            Controls.Add(KeepImgUpdated);
+            Controls.Add(IterationsTextBox);
+            Controls.Add(IterationsPerRendernumericUpDown);
+            Controls.Add(IterationsPerRendertextBox);
+            Controls.Add(MaxReflectionsTextBox);
+            Controls.Add(MaxReflectionsnumericUpDown);
+            Controls.Add(FileNameTextBox);
+            Controls.Add(SaveButton);
             Controls.Add(progressBar1);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(RenderButton);
+            Controls.Add(ResetButton);
             Controls.Add(pictureBox1);
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MaxReflectionsnumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)IterationsPerRendernumericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -229,17 +280,20 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button ResetButton;
+        private System.Windows.Forms.Button RenderButton;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
-        internal System.Windows.Forms.TextBox textBox4;
-        public System.Windows.Forms.TextBox textBox2;
-        public System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Button SaveButton;
+        private System.Windows.Forms.TextBox FileNameTextBox;
+        private System.Windows.Forms.NumericUpDown MaxReflectionsnumericUpDown;
+        private System.Windows.Forms.NumericUpDown IterationsPerRendernumericUpDown;
+        internal System.Windows.Forms.TextBox IterationsTextBox;
+        public System.Windows.Forms.TextBox MaxReflectionsTextBox;
+        public System.Windows.Forms.TextBox IterationsPerRendertextBox;
+        private CheckBox KeepImgUpdated;
+        internal TextBox ETATextBox;
+        private Button LoadButton;
     }
 }
 

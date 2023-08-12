@@ -18,9 +18,9 @@ namespace PathTracing
         Vector3 cam_pos = new Vector3(0, 10, 0);
         Vector3 cam_dir = new Vector3(0, 0, -1);
 
-        //Size cam_resolution = new Size(400, 225);
+        Size cam_resolution = new Size(400, 225);
         //Size cam_resolution = new Size(1600, 900);
-        Size cam_resolution = new Size(2560, 1440);
+        //Size cam_resolution = new Size(2560, 1440);
         //Size cam_resolution = new Size(3200, 1800);
         float FOV = (float)Math.PI / 2;
         float gamma = 2.2F;
@@ -73,7 +73,7 @@ namespace PathTracing
 
 
         // Reset
-        private void button1_Click(object sender, EventArgs e)
+        private void ResetButton_Click(object sender, EventArgs e)
         {
             scene.total_iterations = 0;
             scene.img = new Vector3[cam_resolution.Height, cam_resolution.Width];
@@ -84,7 +84,7 @@ namespace PathTracing
 
 
         // Render
-        private void button2_Click(object sender, EventArgs e)
+        private void RenderButton_Click(object sender, EventArgs e)
         {
             if (scene.loaded && !scene.rendering)
             {
@@ -97,7 +97,7 @@ namespace PathTracing
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            
+
             if (scene.rendering)
             {
                 progressBar1.Value = (int)(scene.render_progress * 100);
@@ -105,27 +105,35 @@ namespace PathTracing
                 {
                     scene.rendering = false;
                 }
-
             }
-            scene.max_ray_reflections = (int)numericUpDown1.Value;
-            scene.iteretions_per_render = (int)numericUpDown2.Value;
-            textBox4.Text = "Total iterations: " + Convert.ToString(scene.total_iterations);
+            scene.max_ray_reflections = (int)MaxReflectionsnumericUpDown.Value;
+            scene.iteretions_per_render = (int)IterationsPerRendernumericUpDown.Value;
+            IterationsTextBox.Text = "Total iterations: " + Convert.ToString(scene.total_iterations);
 
+            // Updating image on windows size change
             if (this.Size != winSize)
             {
                 winSize = this.Size;
                 scene.imgChanged = true;
             }
 
+            // Updating image
             if (scene.imgChanged)
             {
                 pictureBox1.Invalidate();
+            }
+
+            // Updating ETA
+            if (scene.etaUpdated)
+            {
+                ETATextBox.Text = $"ETA: {TimeSpan.FromSeconds((long)scene.eta)}";
+                scene.etaUpdated = false;
             }
         }
 
 
         // Save
-        private void button3_Click(object sender, EventArgs e)
+        private void SaveButton_Click(object sender, EventArgs e)
         {
             if (!scene.rendering && scene.loaded)
             {
@@ -134,17 +142,36 @@ namespace PathTracing
                     Directory.CreateDirectory("Renders");
                 }
                 string path;
-                if (textBox1.Text.Contains("."))
+                if (FileNameTextBox.Text.Contains("."))
                 {
-                    path = "Renders\\" + textBox1.Text;
+                    path = "Renders\\" + FileNameTextBox.Text;
                 }
                 else
                 {
-                    path = "Renders\\" + textBox1.Text + ".bmp";
+                    path = "Renders\\" + FileNameTextBox.Text + ".bmp";
                 }
 
                 scene.SaveToFile(path);
             }
+        }
+
+        private void KeepImgUpdated_CheckedChanged(object sender, EventArgs e)
+        {
+            scene.keepImgUpdated = KeepImgUpdated.Checked;
+        }
+
+        private void LoadButton_Click(object sender, EventArgs e)
+        {
+            string path;
+            if (FileNameTextBox.Text.Contains("."))
+            {
+                path = "Renders\\" + FileNameTextBox.Text;
+            }
+            else
+            {
+                path = "Renders\\" + FileNameTextBox.Text + ".bmp";
+            }
+            scene.LoadFromFile(path);
         }
     }
 }

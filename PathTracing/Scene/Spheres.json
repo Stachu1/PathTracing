@@ -1,0 +1,182 @@
+[
+  {
+    "pos": [
+      -10,
+      6,
+      -20
+    ],
+    "radius": 3,
+    "material_name": "ceramic_red"
+  },
+  {
+    "pos": [
+      0,
+      6,
+      -20
+    ],
+    "radius": 3,
+    "material_name": "glowing_green"
+  },
+  {
+    "pos": [
+      10,
+      6,
+      -20
+    ],
+    "radius": 3,
+    "material_name": "ceramic_blue"
+  },
+  {
+    "pos": [
+      5,
+      5,
+      -22
+    ],
+    "radius": 2,
+    "material_name": "glowing_red"
+  },
+  {
+    "pos": [
+      -5,
+      5,
+      -22
+    ],
+    "radius": 2,
+    "material_name": "glowing_blue"
+  },
+  {
+    "pos": [
+      5,
+      10,
+      -20
+    ],
+    "radius": 2,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      -5,
+      10,
+      -20
+    ],
+    "radius": 2,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      0,
+      15,
+      -22
+    ],
+    "radius": 3,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      0,
+      -9997,
+      -15
+    ],
+    "radius": 10000,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      100,
+      150,
+      0
+    ],
+    "radius": 100,
+    "material_name": "glowing_white"
+  },
+  {
+    "pos": [
+      -10,
+      6,
+      -20
+    ],
+    "radius": 3,
+    "material_name": "ceramic_red"
+  },
+  {
+    "pos": [
+      0,
+      6,
+      -20
+    ],
+    "radius": 3,
+    "material_name": "glowing_green"
+  },
+  {
+    "pos": [
+      10,
+      6,
+      -20
+    ],
+    "radius": 3,
+    "material_name": "ceramic_blue"
+  },
+  {
+    "pos": [
+      5,
+      5,
+      -22
+    ],
+    "radius": 2,
+    "material_name": "glowing_red"
+  },
+  {
+    "pos": [
+      -5,
+      5,
+      -22
+    ],
+    "radius": 2,
+    "material_name": "glowing_blue"
+  },
+  {
+    "pos": [
+      5,
+      10,
+      -20
+    ],
+    "radius": 2,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      -5,
+      10,
+      -20
+    ],
+    "radius": 2,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      0,
+      15,
+      -22
+    ],
+    "radius": 3,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      0,
+      -9997,
+      -15
+    ],
+    "radius": 10000,
+    "material_name": "ceramic_white"
+  },
+  {
+    "pos": [
+      100,
+      150,
+      0
+    ],
+    "radius": 100,
+    "material_name": "glowing_white"
+  }
+]

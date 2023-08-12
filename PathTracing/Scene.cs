@@ -9,6 +9,9 @@ using System.Numerics;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Diagnostics;
 
 namespace PathTracing
 {
@@ -18,7 +21,7 @@ namespace PathTracing
         public Vector3[,] img;
         public Bitmap img_to_show;
 
-        List<Material> materials = new List<Material>();
+        Dictionary<string, Material> materials = new Dictionary<string, Material>();
         List<Sphere> spheres = new List<Sphere>();
 
         public float render_progress = 0;
@@ -30,57 +33,40 @@ namespace PathTracing
         public int max_ray_reflections = 1;
 
         public bool imgChanged = false;
+        public bool keepImgUpdated = true;
+
+        public bool etaUpdated = false;
+
+        public double eta = 0;
 
         Random rnd = new Random();
 
-
         public void LoadMaterials()
         {
-            materials = new List<Material>();
-            List<string> materials_string_list = File.ReadAllText(@"Scene/Materials.txt").Replace("\n", "").Replace("\r", "").Split(';').ToList();
-            foreach (string material_string in materials_string_list)
-            {
-                List<string> material_data_list = material_string.Split(':').ToList();
-                
-                string name = material_data_list[1];
-                List<string> color_values = material_data_list[3].Split(',').ToList();
-                float r = float.Parse(color_values[0], CultureInfo.InvariantCulture);
-                float g = float.Parse(color_values[1], CultureInfo.InvariantCulture);
-                float b = float.Parse(color_values[2], CultureInfo.InvariantCulture);
-                Vector3 color = new Vector3(r, g, b);
-                float shininess = float.Parse(material_data_list[5], CultureInfo.InvariantCulture);
-                float transparency = float.Parse(material_data_list[7], CultureInfo.InvariantCulture);
-                float refractivity = float.Parse(material_data_list[9], CultureInfo.InvariantCulture);
-                float glow = float.Parse(material_data_list[11], CultureInfo.InvariantCulture);
-                Material material = new Material(name, color, shininess, transparency, refractivity, glow);
-                materials.Add(material);
-            }
+
+            JsonSerializerOptions opt = new JsonSerializerOptions();
+            opt.AllowTrailingCommas = true;
+            opt.Converters.Add(new Vector3Converter());
+
+            var potential_materials = JsonSerializer.Deserialize<Dictionary<string, Material>>(File.ReadAllText(@"Scene/Materials.json"), opt);
+            if (potential_materials != null)
+                materials = potential_materials;
+            else
+                materials.Clear();
         }
 
         public void LoadSpheres()
         {
-            spheres = new List<Sphere>();
-            List<string> spheres_string_list = File.ReadAllText(@"Scene/Spheres.txt").Replace("\n", "").Replace("\r", "").Split(';').ToList();
-            foreach (string sphere_string in spheres_string_list)
-            {
-                List<string> sphere_data_list = sphere_string.Split(':').ToList();
+            JsonSerializerOptions opt = new JsonSerializerOptions();
+            opt.AllowTrailingCommas = true;
+            opt.Converters.Add(new Vector3Converter());
 
-                List<string> pos_values = sphere_data_list[1].Split(',').ToList();
-                Vector3 pos = new Vector3(float.Parse(pos_values[0], CultureInfo.InvariantCulture), float.Parse(pos_values[1], CultureInfo.InvariantCulture), float.Parse(pos_values[2], CultureInfo.InvariantCulture));
-                float radius = float.Parse(sphere_data_list[3], CultureInfo.InvariantCulture);
-                string material_name = sphere_data_list[5];
-                foreach (Material material in materials)
-                {
-                    if (material.name == material_name)
-                    {
-                        Sphere sphere = new Sphere(pos, radius, material);
-                        spheres.Add(sphere);
-                        break;
-                    }
-                }
-            }
+            var potential_spheres = JsonSerializer.Deserialize<List<Sphere>>(File.ReadAllText(@"Scene/Spheres.json"), opt);
+            if (potential_spheres != null)
+                spheres = potential_spheres;
+            else
+                spheres.Clear();
         }
-
 
         public void FillArray(ref Vector3[,] array, Vector3 value)
         {
@@ -96,10 +82,9 @@ namespace PathTracing
             }
         }
 
-
         public Bitmap ArrayToImage(Vector3[,] array)
         {
-            
+
             int num_rows = array.GetLength(0);
             int num_cols = array.GetLength(1);
 
@@ -125,19 +110,22 @@ namespace PathTracing
                         vec_color = vec_color / max_value;
                     }
 
-                    Color color = Color.FromArgb((int)(vec_color.X*255.0f), (int)(vec_color.Y * 255.0f), (int)(vec_color.Z * 255.0f));
+                    Color color = Color.FromArgb((int)(vec_color.X * 255.0f), (int)(vec_color.Y * 255.0f), (int)(vec_color.Z * 255.0f));
                     bmp.SetPixel(col, row, color);
                 }
             }
             return bmp;
         }
 
-
         public void Render()
         {
+            Stopwatch st = new Stopwatch();
+
+            render_progress = 0;
             for (int iteration = 0; iteration < iteretions_per_render; iteration++)
             {
-                render_progress = (float)iteration;
+                st.Start();
+
                 Parallel.For(0, camera.resolution.Height, row =>
                 {
                     render_progress += 1.0f / ((float)camera.resolution.Height * (float)iteretions_per_render);
@@ -161,12 +149,24 @@ namespace PathTracing
                         img[row, col] = accum_average_color;
                     });
                 });
+                st.Stop();
+                
                 total_iterations++;
-                img_to_show = ArrayToImage(img);
-                imgChanged = true;
+
+                eta = st.Elapsed.TotalSeconds * (double)(iteretions_per_render - iteration);
+
+                st.Reset();
+
+                etaUpdated = true;
+
+                if (keepImgUpdated)
+                {
+                    img_to_show = ArrayToImage(img);
+                    imgChanged = true;
+                }
             }
             render_progress = 1;
-            
+            eta = 0;
         }
 
         private Vector3 TraceRay(Ray ray)
@@ -205,10 +205,6 @@ namespace PathTracing
             //}
         }
 
-
-        
-
-
         private Vector3 CalculateReflection(Vector3 ray_dir, Vector3 normal, Material material)
         {
             float x = RandomValueNormDistr();
@@ -222,7 +218,6 @@ namespace PathTracing
             return vec;
         }
 
-
         private float RandomValueNormDistr()
         {
             double u1 = rnd.NextDouble();
@@ -231,7 +226,6 @@ namespace PathTracing
             return (float)(Math.Sqrt(-2 * Math.Log(u1)) * Math.Sin(2 * Math.PI * u2));
         }
 
-
         private IntersectionInfo CalculateRayCollision(Ray ray)
         {
             IntersectionInfo info = new IntersectionInfo();
@@ -239,7 +233,7 @@ namespace PathTracing
             /// Sphere intersection
             info.isIntersecting = false;
             info.dis = 0;
-            
+
             foreach (Sphere sphere in spheres)
             {
                 float a = (float)Math.Pow(Vector3.Dot(ray.dir, Vector3.Subtract(ray.pos, sphere.pos)), 2);
@@ -258,7 +252,7 @@ namespace PathTracing
                             info.dis = distance;
                             info.pos = ray.pos + ray.dir * distance;
                             info.normal = Vector3.Normalize(info.pos - sphere.pos);
-                            info.material = sphere.material;
+                            info.material = materials[sphere.material_name];
                         }
                     }
                 }
@@ -267,12 +261,61 @@ namespace PathTracing
             return info;
         }
 
-        public void SaveToFile(string filename)
+        public void SaveToFile(string path)
         {
             using (Bitmap bmp = ArrayToImage(img))
             {
-                bmp.Save(filename);
+                bmp.Save(path);
+            }
+        }
+
+        public void LoadFromFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                using (Bitmap bmp_og = new Bitmap(path))
+                {
+
+                    using (Bitmap bmp = new Bitmap(bmp_og, camera.resolution))
+                    {
+                        for (int row = 0; row < bmp.Size.Height; row++)
+                        {
+                            for (int col = 0; col < bmp.Size.Width; col++)
+                            {
+                                Color pixel_color = bmp.GetPixel(col, row);
+                                Vector3 vec_color = new Vector3((float)pixel_color.R / 255.0f, (float)pixel_color.G / 255.0f, (float)pixel_color.B / 255.0f);
+                                img[row, col] = vec_color;
+                            }
+                        }
+                    }
+                }
+                img_to_show = ArrayToImage(img);
+                imgChanged = true;
             }
         }
     }
+
+    class Vector3Converter : JsonConverter<Vector3>
+    {
+        public override Vector3 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.StartArray)
+            {
+                float[] values = JsonSerializer.Deserialize<float[]>(ref reader, options);
+                return new Vector3(values[0], values[1], values[2]);
+            }
+
+            throw new JsonException("Invalid Vector3 format.");
+        }
+
+        public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options)
+        {
+            writer.WriteStartArray();
+            writer.WriteNumberValue(value.X);
+            writer.WriteNumberValue(value.Y);
+            writer.WriteNumberValue(value.Z);
+            writer.WriteEndArray();
+        }
+    }
+
 }

@@ -11,15 +11,8 @@ namespace PathTracing
 {
     internal class Sphere
     {
-        public Vector3 pos;
-        public float radius;
-        public Material material;
-
-        public Sphere(Vector3 pos, float radius, Material material)
-        {
-            this.pos = pos;
-            this.radius = radius;
-            this.material = material;
-        }
+        public Vector3 pos { get; set; }
+        public float radius { get; set; }
+        public string? material_name { get; set; }
     }
 }

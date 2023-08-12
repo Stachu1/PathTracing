@@ -10,21 +10,10 @@ namespace PathTracing
 {
     internal class Material
     {
-        public string name;
-        public Vector3 color;
-        public float shininess;
-        public float transparency;
-        public float refractivity;
-        public float glow;
-
-        public Material(string name, Vector3 color, float shininess, float transparency, float refractivity, float glow)
-        {
-            this.name = name;
-            this.color = color;
-            this.shininess = shininess;
-            this.transparency = transparency;
-            this.refractivity = refractivity;
-            this.glow = glow;
-        }
+        public Vector3 color { get; set; }
+        public float shininess { get; set; }
+        public float transparency { get; set; }
+        public float refractivity { get; set; }
+        public float glow { get; set; }
     }
 }
