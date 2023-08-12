@@ -29,6 +29,8 @@ namespace PathTracing
         public int iteretions_per_render = 1;
         public int max_ray_reflections = 1;
 
+        public bool imgChanged = false;
+
         Random rnd = new Random();
 
 
@@ -135,10 +137,11 @@ namespace PathTracing
         {
             for (int iteration = 0; iteration < iteretions_per_render; iteration++)
             {
-                for (int row = 0; row < camera.resolution.Height; row++)
+                render_progress = (float)iteration;
+                Parallel.For(0, camera.resolution.Height, row =>
                 {
-                    render_progress = ((float)iteration  + (float)row / (float)camera.resolution.Height) / (float)iteretions_per_render;
-                    for (int col = 0; col < camera.resolution.Width; col++)
+                    render_progress += 1.0f / ((float)camera.resolution.Height * (float)iteretions_per_render);
+                    Parallel.For(0, camera.resolution.Width, col =>
                     {
                         Ray ray = camera.GetRay(row, col);
 
@@ -156,10 +159,11 @@ namespace PathTracing
                         float weight = 1.0f / (total_iterations + 1);
                         Vector3 accum_average_color = old_color * (1 - weight) + new_color * weight;
                         img[row, col] = accum_average_color;
-                    }
-                }
+                    });
+                });
                 total_iterations++;
                 img_to_show = ArrayToImage(img);
+                imgChanged = true;
             }
             render_progress = 1;
             
@@ -261,6 +265,14 @@ namespace PathTracing
             }
 
             return info;
+        }
+
+        public void SaveToFile(string filename)
+        {
+            using (Bitmap bmp = ArrayToImage(img))
+            {
+                bmp.Save(filename);
+            }
         }
     }
 }

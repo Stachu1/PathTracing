@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.1.32228.430
+VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathTracing", "PathTracing\PathTracing.csproj", "{A3B8898E-B497-417C-A466-16B9797BE5FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathTracing", "PathTracing\PathTracing.csproj", "{0F9D827A-39E8-4C54-B7CF-C58C01714CE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A3B8898E-B497-417C-A466-16B9797BE5FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3B8898E-B497-417C-A466-16B9797BE5FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3B8898E-B497-417C-A466-16B9797BE5FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3B8898E-B497-417C-A466-16B9797BE5FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F9D827A-39E8-4C54-B7CF-C58C01714CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F9D827A-39E8-4C54-B7CF-C58C01714CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F9D827A-39E8-4C54-B7CF-C58C01714CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F9D827A-39E8-4C54-B7CF-C58C01714CE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {276D2704-1C4E-4C89-9ED6-5B44703F0919}
+		SolutionGuid = {F20DDBF4-A430-45A2-92BF-DE095DB6C9F5}
 	EndGlobalSection
 EndGlobal
