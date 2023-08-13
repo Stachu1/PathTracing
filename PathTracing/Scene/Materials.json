@@ -1,5 +1,5 @@
 {
-  "ceramic_red": {
+  "red": {
     "color": [
       0.8,
       0.1,
@@ -10,7 +10,7 @@
     "refractivity": 1,
     "glow": 0
   },
-  "ceramic_green": {
+  "green": {
     "color": [
       0.1,
       0.8,
@@ -21,7 +21,7 @@
     "refractivity": 1,
     "glow": 0
   },
-  "ceramic_blue": {
+  "blue": {
     "color": [
       0.1,
       0.1,
@@ -32,7 +32,7 @@
     "refractivity": 1,
     "glow": 0
   },
-  "ceramic_white": {
+  "white": {
     "color": [
       0.8,
       0.8,
@@ -96,6 +96,28 @@
     "shininess": 0.98,
     "transparency": 0.95,
     "refractivity": 1.46,
+    "glow": 0
+  },
+  "steel": {
+    "color": [
+      0.4,
+      0.4,
+      0.4
+    ],
+    "shininess": 0.6,
+    "transparency": 0,
+    "refractivity": 1,
+    "glow": 0
+  },
+  "mirror": {
+    "color": [
+      0.8,
+      0.8,
+      0.9
+    ],
+    "shininess": 1.0,
+    "transparency": 0,
+    "refractivity": 1,
     "glow": 0
   }
 }

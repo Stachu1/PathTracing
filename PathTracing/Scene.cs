@@ -14,6 +14,7 @@ using System.Text.Json.Serialization;
 using System.Diagnostics;
 using System.Timers;
 using static System.Formats.Asn1.AsnWriter;
+using static System.Windows.Forms.DataFormats;
 
 namespace PathTracing
 {
@@ -178,7 +179,6 @@ namespace PathTracing
                         }
                         Vector3 new_color = total_incoming_light / camera.samples_per_pixel;
 
-                        //Vector3 new_color = TraceRay(ray);
                         Vector3 old_color = img[row, col];
 
                         float weight = 1.0f / (total_iterations + 1);
@@ -212,18 +212,22 @@ namespace PathTracing
         {
             Vector3 ray_color = Vector3.One;
             Vector3 incoming_light = Vector3.Zero;
+            float previous_material_refractivity = 1f;
 
-            for (int reflection = 0; reflection < max_ray_reflections; reflection++)
+
+            for (int reflection = 0; reflection < max_ray_reflections + 1; reflection++)
             {
-                IntersectionInfo info = CalculateRayCollision(ray);
-                if (info.isIntersecting)
+                IntersectionInfo hit = CalculateRayCollision(ray);
+                if (hit.is_intersecting)
                 {
-                    ray.pos = info.pos;
-                    ray.dir = CalculateReflection(ray.dir, info.normal, info.material);
+                    ray.pos = hit.pos;
+                    ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material, previous_material_refractivity);
 
-                    incoming_light += info.material.color * info.material.glow * ray_color;
-                    ray_color *= info.material.color;
+                    incoming_light += hit.material.color * hit.material.glow * ray_color;
+                    
+                    ray_color *= hit.material.color;
 
+                    previous_material_refractivity = hit.material.refractivity;
                 }
                 else
                 {
@@ -232,25 +236,52 @@ namespace PathTracing
             }
 
             return incoming_light;
-
-            ///// Ground
-            //if (ray.dir.Y < 0)
-            //{
-            //    float distance = ray.pos.Y / -ray.dir.Y;
-            //    if (distance < intersection_distance || intersection_distance == 0)
-            //    {
-            //        return Color.DarkCyan;
-            //    }
-            //}
         }
 
-        private Vector3 CalculateReflection(Vector3 ray_dir, Vector3 normal, Material material)
+        private Vector3 CalculateReflection(Vector3 ray_dir, Vector3 normal, Material material, float previous_refractivity)
+        {   
+            if (material.transparency > (float)rnd.NextDouble())
+            {
+                return SpecularRefraction(ray_dir, normal, previous_refractivity, material.refractivity);
+            }
+            else
+            {
+                Vector3 diffuse_dir = DiffuseReflection(normal);
+                Vector3 specular_dir = SpecularReflection(ray_dir, normal);
+                return BlendVectors(diffuse_dir, specular_dir, material.shininess);
+            }
+        }
+
+        private Vector3 SpecularRefraction(Vector3 vec, Vector3 norm, float n1, float n2)
         {
-            float x = RandomValueNormDistr();
-            float y = RandomValueNormDistr();
-            float z = RandomValueNormDistr();
-            Vector3 vec = Vector3.Normalize(new Vector3(x, y, z));
-            if (Math.Acos(Vector3.Dot(vec, normal)) > Math.PI / 3.0)
+            float cosTheta1 = Vector3.Dot(-vec, norm);
+            float eta = n1 / n2;
+            float sinTheta2Sqr = eta * eta * (1 - cosTheta1 * cosTheta1);
+
+            if (sinTheta2Sqr > 1f)
+            {
+                return SpecularReflection(vec, norm);
+            }
+
+            float cosTheta2 = MathF.Sqrt(1f - sinTheta2Sqr);
+            Vector3 refracted = eta * vec + (eta * cosTheta1 - cosTheta2) * norm;
+            return Vector3.Normalize(refracted);
+        }
+
+        private Vector3 BlendVectors(Vector3 vec1, Vector3 vec2, float ratio)
+        {
+            return Vector3.Normalize(vec1 * (1 - ratio) + vec2 * ratio);
+        }
+
+        private Vector3 SpecularReflection(Vector3 vec, Vector3 norm)
+        {
+            return Vector3.Normalize(vec - 2 * Vector3.Dot(vec, norm) * norm);
+        }
+
+        private Vector3 DiffuseReflection(Vector3 norm)
+        {
+            Vector3 vec = Vector3.Normalize(new Vector3(RandomValueNormDistr(), RandomValueNormDistr(), RandomValueNormDistr()));
+            if (Math.Acos(Vector3.Dot(vec, norm)) > Math.PI / 2.0)
             {
                 vec = Vector3.Negate(vec);
             }
@@ -270,7 +301,7 @@ namespace PathTracing
             IntersectionInfo info = new IntersectionInfo();
 
             // Sphere intersection
-            info.isIntersecting = false;
+            info.is_intersecting = false;
             info.dis = 0;
 
             foreach (Sphere sphere in spheres)
@@ -285,9 +316,9 @@ namespace PathTracing
                     float distance = -(Vector3.Dot(ray.dir, Vector3.Subtract(ray.pos, sphere.pos))) - (float)Math.Sqrt(discriminant);
                     if (distance >= 0)
                     {
-                        if (distance < info.dis || !info.isIntersecting)
+                        if (distance < info.dis || !info.is_intersecting)
                         {
-                            info.isIntersecting = true;
+                            info.is_intersecting = true;
                             info.dis = distance;
                             info.pos = ray.pos + ray.dir * distance;
                             info.normal = Vector3.Normalize(info.pos - sphere.pos);

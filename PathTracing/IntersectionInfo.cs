@@ -11,7 +11,7 @@ namespace PathTracing
 {
     internal class IntersectionInfo
     {
-        public bool isIntersecting;
+        public bool is_intersecting;
         public float dis;
         public Vector3 pos;
         public Vector3 normal;
