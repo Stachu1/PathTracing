@@ -136,12 +136,12 @@
             MaxReflectionsnumericUpDown.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             MaxReflectionsnumericUpDown.Location = new Point(218, 391);
             MaxReflectionsnumericUpDown.Margin = new Padding(3, 4, 3, 4);
-            MaxReflectionsnumericUpDown.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
+            MaxReflectionsnumericUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             MaxReflectionsnumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             MaxReflectionsnumericUpDown.Name = "MaxReflectionsnumericUpDown";
             MaxReflectionsnumericUpDown.Size = new Size(58, 27);
             MaxReflectionsnumericUpDown.TabIndex = 8;
-            MaxReflectionsnumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            MaxReflectionsnumericUpDown.Value = new decimal(new int[] { 30, 0, 0, 0 });
             // 
             // MaxReflectionsTextBox
             // 
@@ -185,7 +185,7 @@
             IterationsPerRendernumericUpDown.Name = "IterationsPerRendernumericUpDown";
             IterationsPerRendernumericUpDown.Size = new Size(58, 27);
             IterationsPerRendernumericUpDown.TabIndex = 11;
-            IterationsPerRendernumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            IterationsPerRendernumericUpDown.Value = new decimal(new int[] { 10, 0, 0, 0 });
             // 
             // IterationsTextBox
             // 

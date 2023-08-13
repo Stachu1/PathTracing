@@ -12,6 +12,8 @@ using System.Drawing.Imaging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Diagnostics;
+using System.Timers;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace PathTracing
 {
@@ -19,10 +21,7 @@ namespace PathTracing
     {
         public Camera camera;
         public Vector3[,] img;
-        public Bitmap img_to_show;
-
-        Dictionary<string, Material> materials = new Dictionary<string, Material>();
-        List<Sphere> spheres = new List<Sphere>();
+        public Bitmap? img_to_show;
 
         public float render_progress = 0;
 
@@ -35,37 +34,70 @@ namespace PathTracing
         public bool imgChanged = false;
         public bool keepImgUpdated = true;
 
-        public bool etaUpdated = false;
+        public bool etaChanged = false;
 
         public double eta = 0;
+        public double elapsed_time;
 
-        Random rnd = new Random();
+        private Random rnd = new Random();
+
+        private JsonSerializerOptions json_opt = new JsonSerializerOptions();
+
+        private Dictionary<string, Material> materials;
+        private List<Sphere> spheres;
+
+        public Scene()
+        {
+            json_opt.AllowTrailingCommas = true;
+            json_opt.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+            json_opt.Converters.Add(new Vector3Converter());
+            json_opt.Converters.Add(new SizeConverter());
+
+            LoadCamera();
+            img = new Vector3[camera.resolution.Height, camera.resolution.Width];
+            FillArray(ref img, Vector3.Zero);
+            LoadMaterials();
+            LoadSpheres();
+            loaded = true;
+        }
+
+        public void LoadCamera()
+        {
+            var potential_camera = JsonSerializer.Deserialize<Camera>(File.ReadAllText(@"Scene/Camera.json"), json_opt);
+            if (potential_camera != null)
+            {
+                camera = potential_camera;
+            }
+            else
+            {
+                throw new Exception("Failed to load camera!");
+            }
+        }
 
         public void LoadMaterials()
         {
-
-            JsonSerializerOptions opt = new JsonSerializerOptions();
-            opt.AllowTrailingCommas = true;
-            opt.Converters.Add(new Vector3Converter());
-
-            var potential_materials = JsonSerializer.Deserialize<Dictionary<string, Material>>(File.ReadAllText(@"Scene/Materials.json"), opt);
+            var potential_materials = JsonSerializer.Deserialize<Dictionary<string, Material>>(File.ReadAllText(@"Scene/Materials.json"), json_opt);
             if (potential_materials != null)
+            {
                 materials = potential_materials;
+            }
             else
-                materials.Clear();
+            {
+                throw new Exception("Failed to load materials!");
+            }
         }
 
         public void LoadSpheres()
         {
-            JsonSerializerOptions opt = new JsonSerializerOptions();
-            opt.AllowTrailingCommas = true;
-            opt.Converters.Add(new Vector3Converter());
-
-            var potential_spheres = JsonSerializer.Deserialize<List<Sphere>>(File.ReadAllText(@"Scene/Spheres.json"), opt);
+            var potential_spheres = JsonSerializer.Deserialize<List<Sphere>>(File.ReadAllText(@"Scene/Spheres.json"), json_opt);
             if (potential_spheres != null)
+            {
                 spheres = potential_spheres;
+            } 
             else
-                spheres.Clear();
+            {
+                throw new Exception("Failed to load spheres!");
+            }
         }
 
         public void FillArray(ref Vector3[,] array, Vector3 value)
@@ -120,6 +152,10 @@ namespace PathTracing
         public void Render()
         {
             Stopwatch st = new Stopwatch();
+            elapsed_time = 0;
+
+            if (camera == null) 
+                return;
 
             render_progress = 0;
             for (int iteration = 0; iteration < iteretions_per_render; iteration++)
@@ -129,35 +165,33 @@ namespace PathTracing
                 Parallel.For(0, camera.resolution.Height, row =>
                 {
                     render_progress += 1.0f / ((float)camera.resolution.Height * (float)iteretions_per_render);
-                    Parallel.For(0, camera.resolution.Width, col =>
+                    for (int col = 0; col < camera.resolution.Width; col++)
                     {
                         Ray ray = camera.GetRay(row, col);
 
-                        //int raysPerPixlRender = 30;
-                        //Vector3 total_incoming_light = Vector3.Zero;
-                        //for (int ray_index = 0; ray_index < raysPerPixlRender; ray_index++)
-                        //{
-                        //    total_incoming_light += TraceRay((Ray) ray.Clone());
-                        //}
-                        //Vector3 new_color = total_incoming_light / raysPerPixlRender;
+                        Vector3 total_incoming_light = Vector3.Zero;
+                        for (int ray_index = 0; ray_index < camera.samples_per_pixel; ray_index++)
+                        {
+                            var r = (Ray)ray.Clone();
+                            r.Rotate(new Vector3(((float)rnd.NextDouble()*2-1)* camera.ray_deviation, ((float)rnd.NextDouble() * 2 - 1)*camera.ray_deviation, 0));
+                            total_incoming_light += TraceRay(r);
+                        }
+                        Vector3 new_color = total_incoming_light / camera.samples_per_pixel;
 
-                        Vector3 new_color = TraceRay(ray);
+                        //Vector3 new_color = TraceRay(ray);
                         Vector3 old_color = img[row, col];
 
                         float weight = 1.0f / (total_iterations + 1);
                         Vector3 accum_average_color = old_color * (1 - weight) + new_color * weight;
                         img[row, col] = accum_average_color;
-                    });
-                });
-                st.Stop();
-                
+                    }
+                });           
                 total_iterations++;
 
-                eta = st.Elapsed.TotalSeconds * (double)(iteretions_per_render - iteration);
+                eta = (1.0 - render_progress) * (float)st.Elapsed.TotalSeconds / render_progress;
 
-                st.Reset();
-
-                etaUpdated = true;
+                elapsed_time = st.Elapsed.TotalSeconds;
+                etaChanged = true;
 
                 if (keepImgUpdated)
                 {
@@ -165,8 +199,13 @@ namespace PathTracing
                     imgChanged = true;
                 }
             }
+            
+            st.Reset();
             render_progress = 1;
+            img_to_show = ArrayToImage(img);
+            imgChanged = true;
             eta = 0;
+            etaChanged = true;
         }
 
         private Vector3 TraceRay(Ray ray)
@@ -220,25 +259,25 @@ namespace PathTracing
 
         private float RandomValueNormDistr()
         {
-            double u1 = rnd.NextDouble();
-            double u2 = rnd.NextDouble();
+            float u1 = (float)rnd.NextDouble();
+            float u2 = (float)rnd.NextDouble();
 
-            return (float)(Math.Sqrt(-2 * Math.Log(u1)) * Math.Sin(2 * Math.PI * u2));
+            return (float)(MathF.Sqrt(-2 * MathF.Log(u1)) * MathF.Sin(2 * MathF.PI * u2));
         }
 
         private IntersectionInfo CalculateRayCollision(Ray ray)
         {
             IntersectionInfo info = new IntersectionInfo();
 
-            /// Sphere intersection
+            // Sphere intersection
             info.isIntersecting = false;
             info.dis = 0;
 
             foreach (Sphere sphere in spheres)
             {
-                float a = (float)Math.Pow(Vector3.Dot(ray.dir, Vector3.Subtract(ray.pos, sphere.pos)), 2);
-                float b = (float)Math.Pow(Vector3.Distance(ray.pos, sphere.pos), 2);
-                float c = (float)Math.Pow(sphere.radius, 2);
+                float a = MathF.Pow(Vector3.Dot(ray.dir, ray.pos - sphere.pos), 2);
+                float b = MathF.Pow(Vector3.Distance(ray.pos, sphere.pos), 2);
+                float c = MathF.Pow(sphere.radius, 2);
                 float discriminant = a - (b - c);
 
                 if (discriminant >= 0)
@@ -294,28 +333,4 @@ namespace PathTracing
             }
         }
     }
-
-    class Vector3Converter : JsonConverter<Vector3>
-    {
-        public override Vector3 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            if (reader.TokenType == JsonTokenType.StartArray)
-            {
-                float[] values = JsonSerializer.Deserialize<float[]>(ref reader, options);
-                return new Vector3(values[0], values[1], values[2]);
-            }
-
-            throw new JsonException("Invalid Vector3 format.");
-        }
-
-        public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options)
-        {
-            writer.WriteStartArray();
-            writer.WriteNumberValue(value.X);
-            writer.WriteNumberValue(value.Y);
-            writer.WriteNumberValue(value.Z);
-            writer.WriteEndArray();
-        }
-    }
-
 }

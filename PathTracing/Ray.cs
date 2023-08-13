@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Numerics;
+using System.Security.Cryptography;
 
 namespace PathTracing
 {
@@ -22,6 +23,13 @@ namespace PathTracing
         public object Clone()
         {
             return new Ray(pos, dir);
+        }
+
+        public object Rotate(Vector3 angles)
+        {
+            Quaternion rotation = Quaternion.CreateFromYawPitchRoll(angles.X, -angles.Y, -angles.Z);
+            this.dir = Vector3.Normalize(Vector3.Transform(this.dir, rotation));
+            return this;
         }
     }
 }

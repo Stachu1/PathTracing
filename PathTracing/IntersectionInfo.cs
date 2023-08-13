@@ -15,6 +15,6 @@ namespace PathTracing
         public float dis;
         public Vector3 pos;
         public Vector3 normal;
-        public Material material;
+        public Material? material;
     }
 }

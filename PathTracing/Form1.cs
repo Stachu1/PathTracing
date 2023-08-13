@@ -15,32 +15,16 @@ namespace PathTracing
     public partial class Form1 : Form
     {
         Scene scene = new Scene();
-        Vector3 cam_pos = new Vector3(0, 10, 0);
-        Vector3 cam_dir = new Vector3(0, 0, -1);
-
-        Size cam_resolution = new Size(400, 225);
-        //Size cam_resolution = new Size(1600, 900);
-        //Size cam_resolution = new Size(2560, 1440);
-        //Size cam_resolution = new Size(3200, 1800);
-        float FOV = (float)Math.PI / 2;
-        float gamma = 2.2F;
-
         Size winSize;
 
         Bitmap picBoxImage;
 
 
+
+
         public Form1()
         {
             InitializeComponent();
-
-            scene.camera = new Camera(cam_pos, cam_dir, cam_resolution, FOV, gamma);
-            scene.total_iterations = 0;
-            scene.img = new Vector3[cam_resolution.Height, cam_resolution.Width];
-            scene.FillArray(ref scene.img, Vector3.Zero);
-            scene.LoadMaterials();
-            scene.LoadSpheres();
-            scene.loaded = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -51,6 +35,7 @@ namespace PathTracing
             this.BackColor = Color.FromArgb(38, 38, 38);
         }
 
+        // Display render
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             if (pictureBox1.Width < 2 || pictureBox1.Height < 2) return;
@@ -75,11 +60,8 @@ namespace PathTracing
         // Reset
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            scene.total_iterations = 0;
-            scene.img = new Vector3[cam_resolution.Height, cam_resolution.Width];
-            scene.FillArray(ref scene.img, Vector3.Zero);
-            scene.LoadMaterials();
-            scene.LoadSpheres();
+            scene = new Scene();
+            this.Text = "Path Tracing";
         }
 
 
@@ -97,17 +79,23 @@ namespace PathTracing
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-
+            // updating progress bar
             if (scene.rendering)
             {
                 progressBar1.Value = (int)(scene.render_progress * 100);
                 if (progressBar1.Value == 100)
                 {
                     scene.rendering = false;
+                    scene.SaveToFile("Renders\\render.bmp");
                 }
             }
-            scene.max_ray_reflections = (int)MaxReflectionsnumericUpDown.Value;
-            scene.iteretions_per_render = (int)IterationsPerRendernumericUpDown.Value;
+            else
+            {   
+                // Updating render settings
+                scene.max_ray_reflections = (int)MaxReflectionsnumericUpDown.Value;
+                scene.iteretions_per_render = (int)IterationsPerRendernumericUpDown.Value;
+            }
+
             IterationsTextBox.Text = "Total iterations: " + Convert.ToString(scene.total_iterations);
 
             // Updating image on windows size change
@@ -124,15 +112,26 @@ namespace PathTracing
             }
 
             // Updating ETA
-            if (scene.etaUpdated)
+            if (scene.etaChanged)
             {
                 ETATextBox.Text = $"ETA: {TimeSpan.FromSeconds((long)scene.eta)}";
-                scene.etaUpdated = false;
+                scene.etaChanged = false;
+
+                // Updating Title
+
+                if (scene.rendering)
+                {
+                    this.Text = $"Path Tracing - {MathF.Round(scene.render_progress * 100.0f, 2)}% | ETA: {TimeSpan.FromSeconds((long)scene.eta)}";
+                }
+                else
+                {
+                    this.Text = $"Path Tracing - DONE in {TimeSpan.FromSeconds((long)scene.elapsed_time)}";
+                }
             }
         }
 
 
-        // Save
+        // Save render
         private void SaveButton_Click(object sender, EventArgs e)
         {
             if (!scene.rendering && scene.loaded)
@@ -144,11 +143,11 @@ namespace PathTracing
                 string path;
                 if (FileNameTextBox.Text.Contains("."))
                 {
-                    path = "Renders\\" + FileNameTextBox.Text;
+                    path = $"Renders\\{FileNameTextBox.Text}";
                 }
                 else
                 {
-                    path = "Renders\\" + FileNameTextBox.Text + ".bmp";
+                    path = $"Renders\\{FileNameTextBox.Text}.bmp";
                 }
 
                 scene.SaveToFile(path);
@@ -160,16 +159,17 @@ namespace PathTracing
             scene.keepImgUpdated = KeepImgUpdated.Checked;
         }
 
+        // Load redner
         private void LoadButton_Click(object sender, EventArgs e)
         {
             string path;
             if (FileNameTextBox.Text.Contains("."))
             {
-                path = "Renders\\" + FileNameTextBox.Text;
+                path = $"Renders\\{FileNameTextBox.Text}";
             }
             else
             {
-                path = "Renders\\" + FileNameTextBox.Text + ".bmp";
+                path = $"Renders\\{FileNameTextBox.Text}.bmp";
             }
             scene.LoadFromFile(path);
         }

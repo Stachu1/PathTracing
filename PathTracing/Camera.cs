@@ -5,50 +5,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Numerics;
+using Microsoft.VisualBasic.Logging;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 
 namespace PathTracing
 {
     internal class Camera
     {
-        public Vector3 pos;
-        public Vector3 dir;
-        public Size resolution;
-        public float FOV;
-        public float gamma;
-        public Ray[,] rays;
+        public Vector3 pos { get; set; }
+        public Vector3 rotation { get; set; }
+        public Size resolution { get; set; }
+        public float FOV { get; set; }
+        public float gamma { get; set; }
+        public float ray_deviation { get; set; }
+        public int samples_per_pixel { get; set; }
 
-        public Camera(Vector3 pos, Vector3 dir, Size resolution, float FOV, float gamma)
+        private float aspect_ration;
+        private float near_clip_plane;
+
+        public Camera(Vector3 pos, Vector3 rotation, Size resolution, float FOV, float gamma, float ray_deviation, int samples_per_pixel)
         {
             this.pos = pos;
-            this.dir = dir;
+            this.rotation = rotation * MathF.PI / 180f;
             this.resolution = resolution;
-            this.FOV = FOV;
+            this.FOV = FOV * MathF.PI / 180f;
             this.gamma = gamma;
-        }
+            this.ray_deviation = ray_deviation;
+            this.samples_per_pixel = samples_per_pixel;
 
+            this.aspect_ration = (float)resolution.Width / (float)resolution.Height;
+            this.near_clip_plane = (resolution.Width / 2) / MathF.Tan(this.FOV / 2);
+        }
 
         public Ray GetRay(int row, int col)
         {
-            float z = -(resolution.Width / 2) / (float)Math.Tan(FOV / 2);
-            return new Ray(pos, new Vector3(col - resolution.Width / 2, -row + resolution.Height / 2, z));
-        }
-
-        public void Load()
-        {
-            rays = new Ray[resolution.Height, resolution.Width];
-
-            //float z = (float)Math.Cos(FOV / 2) * resolution.Width / 2;
-            //tan a = (x / 2) / z
-            //z = (x / 2) * cot
-            float z = -(resolution.Width / 2) / (float)Math.Tan(FOV / 2);
-
-            for (int row = 0; row < resolution.Height; row++)
-            {
-                for (int col = 0; col < resolution.Width; col++)
-                {
-                    rays[row, col] = new Ray(pos, new Vector3(col - resolution.Width / 2, -row + resolution.Height / 2, z));
-                }
-            }
+            Ray ray = new Ray(pos, new Vector3(col - resolution.Width / 2, resolution.Height / 2 - row, near_clip_plane));
+            return (Ray)ray.Rotate(rotation);
         }
     }
 }
