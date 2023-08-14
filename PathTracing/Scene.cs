@@ -33,13 +33,15 @@ namespace PathTracing
         public int iteretions_per_render = 1;
         public int max_ray_reflections = 1;
 
-        public bool imgChanged = false;
-        public bool keepImgUpdated = true;
+        public bool img_changed = false;
+        public bool keep_img_updated = true;
 
-        public bool etaChanged = false;
+        public bool progressed = false;
 
         public double eta = 0;
         public double elapsed_time;
+
+        public Stopwatch st = new Stopwatch();
 
         private Random rnd = new Random();
 
@@ -153,7 +155,6 @@ namespace PathTracing
 
         public void Render()
         {
-            Stopwatch st = new Stopwatch();
             elapsed_time = 0;
 
             if (camera == null) 
@@ -163,10 +164,10 @@ namespace PathTracing
             for (int iteration = 0; iteration < iteretions_per_render; iteration++)
             {
                 st.Start();
-
                 Parallel.For(0, camera.resolution.Height, row =>
                 {
                     render_progress += 1.0f / ((float)camera.resolution.Height * (float)iteretions_per_render);
+                    progressed = true;
                     for (int col = 0; col < camera.resolution.Width; col++)
                     {
                         Ray ray = camera.GetRay(row, col);
@@ -185,28 +186,25 @@ namespace PathTracing
                         float weight = 1.0f / (total_iterations + 1);
                         Vector3 accum_average_color = old_color * (1 - weight) + new_color * weight;
                         img[row, col] = accum_average_color;
-                    }
-                });           
+                    } 
+                });
                 total_iterations++;
-
-                eta = (1.0 - render_progress) * (float)st.Elapsed.TotalSeconds / render_progress;
-
+                
                 elapsed_time = st.Elapsed.TotalSeconds;
-                etaChanged = true;
-
-                if (keepImgUpdated)
+                
+                if (keep_img_updated)
                 {
                     img_to_show = ArrayToImage(img);
-                    imgChanged = true;
+                    img_changed = true;
                 }
             }
             
             st.Reset();
             render_progress = 1;
             img_to_show = ArrayToImage(img);
-            imgChanged = true;
+            img_changed = true;
             eta = 0;
-            etaChanged = true;
+            progressed = true;
         }
 
         private Vector3 TraceRay(Ray ray)
@@ -377,7 +375,7 @@ namespace PathTracing
                     }
                 }
                 img_to_show = ArrayToImage(img);
-                imgChanged = true;
+                img_changed = true;
             }
         }
     }

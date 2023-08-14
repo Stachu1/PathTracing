@@ -19,7 +19,7 @@ namespace PathTracing
 
         Bitmap picBoxImage;
 
-
+        Thread? thread = null;
 
 
         public Form1()
@@ -53,7 +53,7 @@ namespace PathTracing
                 }
             }
 
-            scene.imgChanged = false;
+            scene.img_changed = false;
         }
 
 
@@ -62,6 +62,7 @@ namespace PathTracing
         {
             scene = new Scene();
             this.Text = "Path Tracing";
+            scene.rendering = false;
         }
 
 
@@ -70,9 +71,10 @@ namespace PathTracing
         {
             if (scene.loaded && !scene.rendering)
             {
-                Thread thread = new Thread(scene.Render);
+                thread = new Thread(scene.Render);
                 thread.Start();
                 scene.rendering = true;
+                this.Text = $"Path Tracing - {MathF.Round(scene.render_progress * 100.0f, 2)}% | ETA: -:-:-";
             }
         }
 
@@ -90,7 +92,7 @@ namespace PathTracing
                 }
             }
             else
-            {   
+            {
                 // Updating render settings
                 scene.max_ray_reflections = (int)MaxReflectionsnumericUpDown.Value;
                 scene.iteretions_per_render = (int)IterationsPerRendernumericUpDown.Value;
@@ -102,20 +104,21 @@ namespace PathTracing
             if (this.Size != winSize)
             {
                 winSize = this.Size;
-                scene.imgChanged = true;
+                scene.img_changed = true;
             }
 
             // Updating image
-            if (scene.imgChanged)
+            if (scene.img_changed)
             {
                 pictureBox1.Invalidate();
             }
 
             // Updating ETA
-            if (scene.etaChanged)
+            if (scene.progressed)
             {
+                scene.eta = (1.0 - scene.render_progress) * (float)scene.st.Elapsed.TotalSeconds / scene.render_progress;
                 ETATextBox.Text = $"ETA: {TimeSpan.FromSeconds((long)scene.eta)}";
-                scene.etaChanged = false;
+                scene.progressed = false;
 
                 // Updating Title
 
@@ -156,7 +159,7 @@ namespace PathTracing
 
         private void KeepImgUpdated_CheckedChanged(object sender, EventArgs e)
         {
-            scene.keepImgUpdated = KeepImgUpdated.Checked;
+            scene.keep_img_updated = KeepImgUpdated.Checked;
         }
 
         // Load redner

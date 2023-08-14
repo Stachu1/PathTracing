@@ -91,6 +91,7 @@
             // timer1
             // 
             timer1.Enabled = true;
+            timer1.Interval = 500;
             timer1.Tick += timer1_Tick;
             // 
             // progressBar1
@@ -134,7 +135,7 @@
             // MaxReflectionsnumericUpDown
             // 
             MaxReflectionsnumericUpDown.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            MaxReflectionsnumericUpDown.Location = new Point(218, 391);
+            MaxReflectionsnumericUpDown.Location = new Point(218, 397);
             MaxReflectionsnumericUpDown.Margin = new Padding(3, 4, 3, 4);
             MaxReflectionsnumericUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             MaxReflectionsnumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -150,7 +151,7 @@
             MaxReflectionsTextBox.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
             MaxReflectionsTextBox.ForeColor = Color.White;
             MaxReflectionsTextBox.ImeMode = ImeMode.NoControl;
-            MaxReflectionsTextBox.Location = new Point(12, 391);
+            MaxReflectionsTextBox.Location = new Point(12, 397);
             MaxReflectionsTextBox.Margin = new Padding(3, 4, 3, 4);
             MaxReflectionsTextBox.Name = "MaxReflectionsTextBox";
             MaxReflectionsTextBox.ReadOnly = true;
@@ -166,7 +167,7 @@
             IterationsPerRendertextBox.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
             IterationsPerRendertextBox.ForeColor = Color.White;
             IterationsPerRendertextBox.ImeMode = ImeMode.NoControl;
-            IterationsPerRendertextBox.Location = new Point(12, 426);
+            IterationsPerRendertextBox.Location = new Point(12, 432);
             IterationsPerRendertextBox.Margin = new Padding(3, 4, 3, 4);
             IterationsPerRendertextBox.Name = "IterationsPerRendertextBox";
             IterationsPerRendertextBox.ReadOnly = true;
@@ -178,7 +179,7 @@
             // IterationsPerRendernumericUpDown
             // 
             IterationsPerRendernumericUpDown.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-            IterationsPerRendernumericUpDown.Location = new Point(218, 426);
+            IterationsPerRendernumericUpDown.Location = new Point(218, 432);
             IterationsPerRendernumericUpDown.Margin = new Padding(3, 4, 3, 4);
             IterationsPerRendernumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             IterationsPerRendernumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -209,7 +210,7 @@
             KeepImgUpdated.CheckState = CheckState.Checked;
             KeepImgUpdated.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             KeepImgUpdated.ForeColor = Color.White;
-            KeepImgUpdated.Location = new Point(12, 357);
+            KeepImgUpdated.Location = new Point(12, 360);
             KeepImgUpdated.Margin = new Padding(8, 6, 6, 6);
             KeepImgUpdated.Name = "KeepImgUpdated";
             KeepImgUpdated.Size = new Size(194, 27);
