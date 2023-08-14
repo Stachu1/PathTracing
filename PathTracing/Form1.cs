@@ -21,6 +21,7 @@ namespace PathTracing
 
         Thread? thread = null;
 
+        const float WINDOW_SIZE_PERCENTAGE = 0.5f;   // Percentage of primary screen width
 
         public Form1()
         {
@@ -31,7 +32,7 @@ namespace PathTracing
         {
             this.Text = "Path Tracing";
             this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.Size = new Size(1600, 791);
+            this.Size = GetDeafultWindowSize(WINDOW_SIZE_PERCENTAGE, scene.camera.aspect_ratio);
             this.BackColor = Color.FromArgb(38, 38, 38);
         }
 
@@ -62,7 +63,7 @@ namespace PathTracing
         {
             scene = new Scene();
             this.Text = "Path Tracing";
-            scene.rendering = false;
+            this.Size = GetDeafultWindowSize(WINDOW_SIZE_PERCENTAGE, scene.camera.aspect_ratio);
         }
 
 
@@ -175,6 +176,16 @@ namespace PathTracing
                 path = $"Renders\\{FileNameTextBox.Text}.bmp";
             }
             scene.LoadFromFile(path);
+        }
+
+        // Return deafult window size
+        private Size GetDeafultWindowSize(float size_perc, float ratio)
+        {
+            int windowWidth = (int)(Screen.PrimaryScreen.Bounds.Width * size_perc);
+            int picBoxWidth = windowWidth - 308;   // Magic number (pixel size for the buttons and offsets)
+            int picBoxHeight = (int)((float)picBoxWidth / ratio);
+            int windowHeight = picBoxHeight + 77;   // Magic number (pixel size for the offsets)
+            return new Size(windowWidth, windowHeight);
         }
     }
 }

@@ -21,8 +21,8 @@ namespace PathTracing
         public float ray_deviation { get; set; }
         public int samples_per_pixel { get; set; }
 
-        private float aspect_ration;
-        private float near_clip_plane;
+        public float aspect_ratio;
+        public float near_clip_plane;
 
         public Camera(Vector3 pos, Vector3 rotation, Size resolution, float FOV, float gamma, float ray_deviation, int samples_per_pixel)
         {
@@ -34,7 +34,7 @@ namespace PathTracing
             this.ray_deviation = ray_deviation;
             this.samples_per_pixel = samples_per_pixel;
 
-            this.aspect_ration = (float)resolution.Width / (float)resolution.Height;
+            this.aspect_ratio = (float)resolution.Width / (float)resolution.Height;
             this.near_clip_plane = (resolution.Width / 2) / MathF.Tan(this.FOV / 2);
         }
 

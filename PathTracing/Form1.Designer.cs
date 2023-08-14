@@ -109,7 +109,7 @@
             SaveButton.BackColor = Color.FromArgb(64, 64, 64);
             SaveButton.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             SaveButton.ForeColor = Color.White;
-            SaveButton.Location = new Point(12, 855);
+            SaveButton.Location = new Point(6, 853);
             SaveButton.Margin = new Padding(3, 4, 3, 4);
             SaveButton.Name = "SaveButton";
             SaveButton.Size = new Size(130, 62);
@@ -125,7 +125,7 @@
             FileNameTextBox.BorderStyle = BorderStyle.None;
             FileNameTextBox.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point);
             FileNameTextBox.ForeColor = Color.White;
-            FileNameTextBox.Location = new Point(12, 824);
+            FileNameTextBox.Location = new Point(6, 822);
             FileNameTextBox.Margin = new Padding(3, 4, 3, 4);
             FileNameTextBox.Name = "FileNameTextBox";
             FileNameTextBox.Size = new Size(270, 23);
@@ -239,7 +239,7 @@
             LoadButton.BackColor = Color.FromArgb(64, 64, 64);
             LoadButton.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             LoadButton.ForeColor = Color.White;
-            LoadButton.Location = new Point(152, 855);
+            LoadButton.Location = new Point(146, 853);
             LoadButton.Margin = new Padding(3, 4, 3, 4);
             LoadButton.Name = "LoadButton";
             LoadButton.Size = new Size(130, 62);
