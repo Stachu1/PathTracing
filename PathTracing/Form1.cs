@@ -90,7 +90,7 @@ namespace PathTracing
                 {
                     scene.rendering = false;
                     // Auto save with no gamma correction
-                    scene.SaveToFile($"Renders\\NoGamma_{scene.camera.samples_per_pixel * scene.total_iterations}.bmp", scene.img_array);
+                    scene.SaveToFile($"Renders\\NoGamma_{scene.camera.samples_per_pixel * scene.total_iterations}SPP.bmp", scene.img_array);
                 }
             }
             else
@@ -169,7 +169,7 @@ namespace PathTracing
         private void LoadButton_Click(object sender, EventArgs e)
         {
             string path;
-            if (FileNameTextBox.Text.Contains("."))
+            if (FileNameTextBox.Text.Contains(".bmp"))
             {
                 path = $"Renders\\{FileNameTextBox.Text}";
             }

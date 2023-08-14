@@ -242,8 +242,8 @@ namespace PathTracing
                     ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material);
 
                     incoming_light += hit.material.color * hit.material.glow * ray_color;
-                    ray_color *= hit.material.color * MathF.Abs(Vector3.Dot(ray.dir, hit.normal));
-                    //ray_color *= hit.material.color;
+                    // ray_color *= hit.material.color * MathF.Abs(Vector3.Dot(ray.dir, hit.normal));
+                    ray_color *= hit.material.color;
                 }
                 else
                 {
@@ -264,7 +264,8 @@ namespace PathTracing
             {
                 Vector3 diffuse_dir = DiffuseReflection(normal);
                 Vector3 specular_dir = SpecularReflection(ray_dir, normal);
-                return BlendVectors(diffuse_dir, specular_dir, material.shininess);
+                Vector3 result_dir = BlendVectors(diffuse_dir, specular_dir, material.shininess);
+                return Vector3.Normalize(normal + result_dir);
             }
         }
 
@@ -395,7 +396,7 @@ namespace PathTracing
                         }
                     }
                 }
-                img_to_show = ArrayToImage(img_array);
+                img_to_show = ArrayToImage(ApplyGammaCorrection((Vector3[,])img_array.Clone(), camera.gamma));
                 img_changed = true;
             }
         }
