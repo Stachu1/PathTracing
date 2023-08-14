@@ -47,7 +47,7 @@
   {
     "pos": [
       -5,
-      11,
+      10,
       25
     ],
     "radius": 4,
@@ -56,16 +56,7 @@
   {
     "pos": [
       5,
-      11,
-      25
-    ],
-    "radius": 4,
-    "material_name": "mirror"
-  },
-  {
-    "pos": [
-      5,
-      11,
+      10,
       25
     ],
     "radius": 4,
@@ -91,11 +82,56 @@
   },
   {
     "pos": [
-      0,
-      7,
-      0
+      10,
+      8,
+      20
     ],
-    "radius": 7,
-    "material_name":  "glass"
+    "radius": 2,
+    "material_name": "glass"
+  },
+  {
+    "pos": [
+      17,
+      10,
+      25
+    ],
+    "radius": 4,
+    "material_name": "green"
+  },
+  {
+    "pos": [
+      -5,
+      2,
+      15
+    ],
+    "radius": 2,
+    "material_name": "glass"
+  },
+  {
+    "pos": [
+      6,
+      2,
+      15
+    ],
+    "radius": 2,
+    "material_name": "glass"
+  },
+  {
+    "pos": [
+      -11,
+      1,
+      17
+    ],
+    "radius": 1,
+    "material_name": "glowing_white"
+  },
+  {
+    "pos": [
+      -20,
+      5,
+      30
+    ],
+    "radius": 5,
+    "material_name": "steel"
   }
 ]

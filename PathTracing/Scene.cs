@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Timers;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Windows.Forms.DataFormats;
+using System.ComponentModel.Design.Serialization;
 
 namespace PathTracing
 {
@@ -212,8 +213,6 @@ namespace PathTracing
         {
             Vector3 ray_color = Vector3.One;
             Vector3 incoming_light = Vector3.Zero;
-            float previous_material_refractivity = 1f;
-
 
             for (int reflection = 0; reflection < max_ray_reflections + 1; reflection++)
             {
@@ -221,13 +220,11 @@ namespace PathTracing
                 if (hit.is_intersecting)
                 {
                     ray.pos = hit.pos;
-                    ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material, previous_material_refractivity);
+                    ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material);
 
                     incoming_light += hit.material.color * hit.material.glow * ray_color;
-                    
-                    ray_color *= hit.material.color;
-
-                    previous_material_refractivity = hit.material.refractivity;
+                    ray_color *= hit.material.color * MathF.Abs(Vector3.Dot(ray.dir, hit.normal));
+                    //ray_color *= hit.material.color;
                 }
                 else
                 {
@@ -238,11 +235,11 @@ namespace PathTracing
             return incoming_light;
         }
 
-        private Vector3 CalculateReflection(Vector3 ray_dir, Vector3 normal, Material material, float previous_refractivity)
+        private Vector3 CalculateReflection(Vector3 ray_dir, Vector3 normal, Material material)
         {   
             if (material.transparency > (float)rnd.NextDouble())
             {
-                return SpecularRefraction(ray_dir, normal, previous_refractivity, material.refractivity);
+                return SpecularRefraction(ray_dir, normal, material.refractivity);
             }
             else
             {
@@ -252,19 +249,39 @@ namespace PathTracing
             }
         }
 
-        private Vector3 SpecularRefraction(Vector3 vec, Vector3 norm, float n1, float n2)
+        private Vector3 SpecularRefraction(Vector3 vec, Vector3 norm, float material_refractivity)
         {
-            float cosTheta1 = Vector3.Dot(-vec, norm);
-            float eta = n1 / n2;
-            float sinTheta2Sqr = eta * eta * (1 - cosTheta1 * cosTheta1);
+            // Ray is exiting the object
+            float dot = Vector3.Dot(vec, norm);
+            float eta;
+            float cos_theta1;
 
-            if (sinTheta2Sqr > 1f)
+
+            // Ray is entering the object
+            if (dot < 0)
+            {
+                eta = 1f / material_refractivity;
+                cos_theta1 = Vector3.Dot(-vec, norm);
+            }
+            // Ray is exiting the object
+            else
+            {
+                eta = material_refractivity;
+                cos_theta1 = Vector3.Dot(vec, norm);
+                norm = -norm;
+            }
+
+            float sin_theta2_sqr = eta * eta * (1 - cos_theta1 * cos_theta1);
+
+            // Ray reflection
+            if (sin_theta2_sqr > 1f)
             {
                 return SpecularReflection(vec, norm);
             }
 
-            float cosTheta2 = MathF.Sqrt(1f - sinTheta2Sqr);
-            Vector3 refracted = eta * vec + (eta * cosTheta1 - cosTheta2) * norm;
+            // Ray refraction
+            float cos_theta2 = MathF.Sqrt(1f - sin_theta2_sqr);
+            Vector3 refracted = eta * vec + (eta * cos_theta1 - cos_theta2) * norm;
             return Vector3.Normalize(refracted);
         }
 
