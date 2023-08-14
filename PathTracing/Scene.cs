@@ -22,7 +22,7 @@ namespace PathTracing
     internal class Scene
     {
         public Camera camera;
-        public Vector3[,] img;
+        public Vector3[,] img_array;
         public Bitmap? img_to_show;
 
         public float render_progress = 0;
@@ -58,8 +58,8 @@ namespace PathTracing
             json_opt.Converters.Add(new SizeConverter());
 
             LoadCamera();
-            img = new Vector3[camera.resolution.Height, camera.resolution.Width];
-            FillArray(ref img, Vector3.Zero);
+            img_array = new Vector3[camera.resolution.Height, camera.resolution.Width];
+            FillArray(ref img_array, Vector3.Zero);
             LoadMaterials();
             LoadSpheres();
             loaded = true;
@@ -118,6 +118,24 @@ namespace PathTracing
             }
         }
 
+        public Vector3[,] ApplyGammaCorrection(Vector3[,] array, float gamma)
+        {
+            float inverter_gamma = 1f / gamma;
+            int num_rows = array.GetLength(0);
+            int num_cols = array.GetLength(1);
+            Parallel.For(0, num_rows, row =>
+            {
+                for (int col = 0; col < num_cols; col++)
+                {
+                    array[row, col] = new Vector3(
+                        MathF.Pow(array[row, col].X, inverter_gamma), 
+                        MathF.Pow(array[row, col].Y, inverter_gamma), 
+                        MathF.Pow(array[row, col].Z, inverter_gamma));
+                }
+            });
+            return array;
+        }
+
         public Bitmap ArrayToImage(Vector3[,] array)
         {
 
@@ -166,8 +184,6 @@ namespace PathTracing
                 st.Start();
                 Parallel.For(0, camera.resolution.Height, row =>
                 {
-                    render_progress += 1.0f / ((float)camera.resolution.Height * (float)iteretions_per_render);
-                    progressed = true;
                     for (int col = 0; col < camera.resolution.Width; col++)
                     {
                         Ray ray = camera.GetRay(row, col);
@@ -181,12 +197,14 @@ namespace PathTracing
                         }
                         Vector3 new_color = total_incoming_light / camera.samples_per_pixel;
 
-                        Vector3 old_color = img[row, col];
+                        Vector3 old_color = img_array[row, col];
 
                         float weight = 1.0f / (total_iterations + 1);
                         Vector3 accum_average_color = old_color * (1 - weight) + new_color * weight;
-                        img[row, col] = accum_average_color;
-                    } 
+                        img_array[row, col] = accum_average_color;
+                    }
+                    render_progress += 1.0f / ((float)camera.resolution.Height * (float)iteretions_per_render);
+                    progressed = true;
                 });
                 total_iterations++;
                 
@@ -194,14 +212,17 @@ namespace PathTracing
                 
                 if (keep_img_updated)
                 {
-                    img_to_show = ArrayToImage(img);
+                    // Show mid render image without gamma correction
+                    img_to_show = ArrayToImage(img_array);
                     img_changed = true;
                 }
             }
             
             st.Reset();
             render_progress = 1;
-            img_to_show = ArrayToImage(img);
+
+            // Show final image with gamma correction
+            img_to_show = ArrayToImage(ApplyGammaCorrection((Vector3[,])img_array.Clone(), camera.gamma));
             img_changed = true;
             eta = 0;
             progressed = true;
@@ -346,9 +367,9 @@ namespace PathTracing
             return info;
         }
 
-        public void SaveToFile(string path)
+        public void SaveToFile(string path, Vector3[,] array)
         {
-            using (Bitmap bmp = ArrayToImage(img))
+            using (Bitmap bmp = ArrayToImage(array))
             {
                 bmp.Save(path);
             }
@@ -369,12 +390,12 @@ namespace PathTracing
                             {
                                 Color pixel_color = bmp.GetPixel(col, row);
                                 Vector3 vec_color = new Vector3((float)pixel_color.R / 255.0f, (float)pixel_color.G / 255.0f, (float)pixel_color.B / 255.0f);
-                                img[row, col] = vec_color;
+                                img_array[row, col] = vec_color;
                             }
                         }
                     }
                 }
-                img_to_show = ArrayToImage(img);
+                img_to_show = ArrayToImage(img_array);
                 img_changed = true;
             }
         }

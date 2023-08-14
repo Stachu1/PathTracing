@@ -89,7 +89,8 @@ namespace PathTracing
                 if (progressBar1.Value == 100)
                 {
                     scene.rendering = false;
-                    scene.SaveToFile("Renders\\render.bmp");
+                    // Auto save with no gamma correction
+                    scene.SaveToFile($"Renders\\NoGamma_{scene.camera.samples_per_pixel * scene.total_iterations}.bmp", scene.img_array);
                 }
             }
             else
@@ -154,7 +155,8 @@ namespace PathTracing
                     path = $"Renders\\{FileNameTextBox.Text}.bmp";
                 }
 
-                scene.SaveToFile(path);
+                // Save file with gamma correction applyed
+                scene.SaveToFile(path, scene.ApplyGammaCorrection(scene.img_array, scene.camera.gamma));
             }
         }
 
