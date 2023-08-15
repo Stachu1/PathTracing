@@ -240,7 +240,7 @@ namespace PathTracing
                 {
                     ray.pos = hit.pos;
 
-                    if (hit.material.specular_reflection_probability > rnd.NextDouble())
+                    if (hit.material.specular_reflection_probability > rnd.NextDouble() && false)
                     {
                         // Specular reflection with no color (Coated object)
                         ray.dir = SpecularReflection(ray.dir, hit.normal);
@@ -309,8 +309,7 @@ namespace PathTracing
 
             // Ray refraction
             float cos_theta2 = MathF.Sqrt(1f - sin_theta2_sqr);
-            Vector3 refracted = eta * vec + (eta * cos_theta1 - cos_theta2) * norm;
-            return Vector3.Normalize(refracted);
+            return eta * vec + (eta * cos_theta1 - cos_theta2) * norm;
         }
 
         private Vector3 BlendVectors(Vector3 vec1, Vector3 vec2, float ratio)
@@ -320,7 +319,7 @@ namespace PathTracing
 
         private Vector3 SpecularReflection(Vector3 vec, Vector3 norm)
         {
-            return Vector3.Normalize(vec - 2 * Vector3.Dot(vec, norm) * norm);
+            return vec - 2 * Vector3.Dot(vec, norm) * norm;
         }
 
         private Vector3 DiffuseReflection(Vector3 norm)

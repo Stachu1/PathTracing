@@ -25,6 +25,9 @@ namespace PathTracing
 
         const float WINDOW_SIZE_PERCENTAGE = 0.5f;   // Percentage of primary screen width
 
+        bool do_reset = false;
+        bool start_render = false;
+
 
         public Form1()
         {
@@ -64,21 +67,24 @@ namespace PathTracing
         // Reset
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            scene = new Scene();
-            this.Text = "Path Tracing";
-            this.Size = GetDeafultWindowSize(WINDOW_SIZE_PERCENTAGE, scene.camera.aspect_ratio);
+            do_reset = true;
         }
 
 
         // Render
         private void RenderButton_Click(object sender, EventArgs e)
         {
+            if (do_reset)
+            {
+                do_reset = false;
+                scene = new Scene();
+                this.Text = "Path Tracing";
+                this.Size = GetDeafultWindowSize(WINDOW_SIZE_PERCENTAGE, scene.camera.aspect_ratio);
+            }
+
             if (scene.loaded && !scene.rendering)
             {
-                thread = new Thread(scene.Render);
-                thread.Start();
-                scene.rendering = true;
-                this.Text = $"Path Tracing - {MathF.Round(scene.render_progress * 100.0f, 2)}% | ETA: -:-:-";
+                start_render = true;
             }
         }
 
@@ -101,6 +107,15 @@ namespace PathTracing
                 // Updating render settings
                 scene.max_ray_reflections = (int)MaxReflectionsnumericUpDown.Value;
                 scene.iteretions_per_render = (int)IterationsPerRendernumericUpDown.Value;
+
+                if (start_render)
+                {
+                    start_render = false;
+                    thread = new Thread(scene.Render);
+                    thread.Start();
+                    scene.rendering = true;
+                    this.Text = $"Path Tracing - {MathF.Round(scene.render_progress * 100.0f, 2)}% | ETA: -:-:-";
+                }
             }
 
             IterationsTextBox.Text = "Total iterations: " + Convert.ToString(scene.total_iterations);
