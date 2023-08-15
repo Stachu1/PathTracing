@@ -9,6 +9,8 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Numerics;
 using System.IO;
+using System.Runtime.InteropServices;
+using static System.Windows.Forms.AxHost;
 
 namespace PathTracing
 {
@@ -22,6 +24,7 @@ namespace PathTracing
         Thread? thread = null;
 
         const float WINDOW_SIZE_PERCENTAGE = 0.5f;   // Percentage of primary screen width
+
 
         public Form1()
         {
@@ -131,6 +134,13 @@ namespace PathTracing
                 else
                 {
                     this.Text = $"Path Tracing - DONE in {TimeSpan.FromSeconds((long)scene.elapsed_time)}";
+
+                    if (this.WindowState != FormWindowState.Maximized)
+                    {
+                        this.WindowState = FormWindowState.Minimized;
+                        this.Show();
+                        this.WindowState = FormWindowState.Normal;
+                    }
                 }
             }
         }

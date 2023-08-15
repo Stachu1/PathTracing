@@ -239,11 +239,20 @@ namespace PathTracing
                 if (hit.is_intersecting)
                 {
                     ray.pos = hit.pos;
-                    ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material);
 
-                    incoming_light += hit.material.color * hit.material.glow * ray_color;
-                    // ray_color *= hit.material.color * MathF.Abs(Vector3.Dot(ray.dir, hit.normal));
-                    ray_color *= hit.material.color;
+                    if (hit.material.specular_reflection_probability > rnd.NextDouble())
+                    {
+                        // Specular reflection with no color (Coated object)
+                        ray.dir = SpecularReflection(ray.dir, hit.normal);
+                        incoming_light += hit.material.color * hit.material.light_emission * ray_color;
+                    }
+                    else
+                    {
+                        // Normar reflection based on the object material and its color
+                        ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material);
+                        incoming_light += hit.material.color * hit.material.light_emission * ray_color;
+                        ray_color *= hit.material.color;
+                    }
                 }
                 else
                 {
@@ -264,8 +273,7 @@ namespace PathTracing
             {
                 Vector3 diffuse_dir = DiffuseReflection(normal);
                 Vector3 specular_dir = SpecularReflection(ray_dir, normal);
-                Vector3 result_dir = BlendVectors(diffuse_dir, specular_dir, material.shininess);
-                return Vector3.Normalize(normal + result_dir);
+                return BlendVectors(diffuse_dir, specular_dir, material.smoothness);
             }
         }
 
@@ -322,7 +330,7 @@ namespace PathTracing
             {
                 vec = Vector3.Negate(vec);
             }
-            return vec;
+            return Vector3.Normalize(norm + vec);
         }
 
         private float RandomValueNormDistr()
