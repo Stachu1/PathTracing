@@ -35,6 +35,8 @@ namespace PathTracing
         public int iteretions_per_render = 1;
         public int max_ray_reflections = 1;
 
+        public bool abort_render = false;
+
         public bool img_changed = false;
         public bool keep_img_updated = true;
 
@@ -247,6 +249,7 @@ namespace PathTracing
 
         public void Render()
         {
+            abort_render = false;
             elapsed_time = 0;
 
             if (camera == null) 
@@ -260,6 +263,15 @@ namespace PathTracing
                 {
                     for (int col = 0; col < camera.resolution.Width; col++)
                     {
+                        // Stop the redner 
+                        if (abort_render)
+                        {
+                            render_progress = 0;
+                            total_iterations = 0;
+                            progressed = false;
+                            return;
+                        }
+
                         Ray ray = camera.GetRay(row, col);
 
                         Vector3 total_incoming_light = Vector3.Zero;

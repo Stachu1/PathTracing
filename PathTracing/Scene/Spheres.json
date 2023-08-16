@@ -82,12 +82,12 @@
   },
   {
     "pos": [
-      10,
-      8,
-      20
+      9,
+      7,
+      14
     ],
     "radius": 2,
-    "material_name": "glass"
+    "material_name": "gold"
   },
   {
     "pos": [
@@ -96,7 +96,7 @@
       25
     ],
     "radius": 4,
-    "material_name": "green"
+    "material_name": "copper"
   },
   {
     "pos": [
@@ -109,9 +109,9 @@
   },
   {
     "pos": [
-      4,
+      3,
       2,
-      15
+      16
     ],
     "radius": 2,
     "material_name": "glass"

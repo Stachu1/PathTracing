@@ -68,6 +68,8 @@ namespace PathTracing
         private void ResetButton_Click(object sender, EventArgs e)
         {
             do_reset = true;
+            scene.abort_render = true;
+            this.Text = $"Path Tracing";
         }
 
 
@@ -112,6 +114,7 @@ namespace PathTracing
                 {
                     start_render = false;
                     thread = new Thread(scene.Render);
+                    thread.IsBackground = true;
                     thread.Start();
                     scene.rendering = true;
                     this.Text = $"Path Tracing - {MathF.Round(scene.render_progress * 100.0f, 2)}% | ETA: -:-:-";

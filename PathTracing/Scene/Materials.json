@@ -153,7 +153,7 @@
     "specular_reflection_probability": 0,
     "transparency": 0,
     "refractivity": 1,
-    "light_emission": 4
+    "light_emission": 2
   },
   {
     "name": "sun",
@@ -166,7 +166,7 @@
     "specular_reflection_probability": 0,
     "transparency": 0,
     "refractivity": 1,
-    "light_emission": 10
+    "light_emission": 5
   },
   {
     "name": "glass",
@@ -179,6 +179,19 @@
     "specular_reflection_probability": 0,
     "transparency": 1,
     "refractivity": 1.5,
+    "light_emission": 0
+  },
+  {
+    "name": "mirror",
+    "color": [
+      0.8,
+      0.8,
+      0.9
+    ],
+    "smoothness": 1.0,
+    "specular_reflection_probability": 0,
+    "transparency": 0,
+    "refractivity": 1,
     "light_emission": 0
   },
   {
@@ -195,13 +208,26 @@
     "light_emission": 0
   },
   {
-    "name": "mirror",
+    "name": "gold",
     "color": [
-      0.8,
-      0.8,
-      0.9
+      1.0,
+      0.84,
+      0.0
     ],
-    "smoothness": 1.0,
+    "smoothness": 0.7,
+    "specular_reflection_probability": 0,
+    "transparency": 0,
+    "refractivity": 1,
+    "light_emission": 0
+  },
+  {
+    "name": "copper",
+    "color": [
+      0.72,
+      0.45,
+      0.2
+    ],
+    "smoothness": 0.55,
     "specular_reflection_probability": 0,
     "transparency": 0,
     "refractivity": 1,
