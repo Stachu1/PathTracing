@@ -21,6 +21,8 @@ namespace PathTracing
         public float ray_deviation { get; set; }
         public int samples_per_pixel { get; set; }
 
+        public float SPP_multiplier_for_transparent_materials { get; set; }
+
         public float aspect_ratio;
         public float near_clip_plane;
 

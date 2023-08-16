@@ -78,48 +78,48 @@ namespace PathTracing
         // To be deleted in later versions with STL files suppor
         private void AddBox()
         {
-            meshes = new Mesh[1];
+            meshes = new Mesh[2];
             meshes[0] = new Mesh(Vector3.Zero, Vector3.Zero, 1f, "steel");
-            meshes[0].SetMaterial("glass", materials);
+            meshes[0].SetMaterial("red", materials);
             float h = 5;
             meshes[0].triangles = new Triangle[10];
             meshes[0].triangles[0] = new Triangle(
-                            new Vector3(9, 0, 12),
-                            new Vector3(7, 0, 14),
+                            new Vector3(9, -1, 12),
+                            new Vector3(7, -1, 14),
                             new Vector3(7, h, 14),
                             Vector3.Normalize(new Vector3(-1, 0, -1)));
             meshes[0].triangles[1] = new Triangle(
-                            new Vector3(7, 0, 14),
+                            new Vector3(7, -1, 14),
                             new Vector3(7, h, 14),
-                            new Vector3(9, 0, 16),
+                            new Vector3(9, -1, 16),
                             Vector3.Normalize(new Vector3(-1, 0, 1)));
             meshes[0].triangles[2] = new Triangle(
                             new Vector3(7, h, 14),
                             new Vector3(9, h, 16),
-                            new Vector3(9, 0, 16),
+                            new Vector3(9, -1, 16),
                             Vector3.Normalize(new Vector3(-1, 0, 1)));
             meshes[0].triangles[3] = new Triangle(
-                            new Vector3(9, 0, 16),
+                            new Vector3(9, -1, 16),
                             new Vector3(9, h, 16),
-                            new Vector3(11, 0, 14),
+                            new Vector3(11, -1, 14),
                             Vector3.Normalize(new Vector3(1, 0, 1)));
             meshes[0].triangles[4] = new Triangle(
                             new Vector3(9, h, 16),
                             new Vector3(11, h, 14),
-                            new Vector3(11, 0, 14),
+                            new Vector3(11, -1, 14),
                             Vector3.Normalize(new Vector3(1, 0, 1)));
             meshes[0].triangles[5] = new Triangle(
-                            new Vector3(11, 0, 14),
+                            new Vector3(11, -1, 14),
                             new Vector3(11, h, 14),
-                            new Vector3(9, 0, 12),
+                            new Vector3(9, -1, 12),
                             Vector3.Normalize(new Vector3(1, 0, -1)));
             meshes[0].triangles[6] = new Triangle(
-                            new Vector3(9, 0, 12),
+                            new Vector3(9, -1, 12),
                             new Vector3(9, h, 12),
                             new Vector3(11, h, 14),
                             Vector3.Normalize(new Vector3(1, 0, -1)));
             meshes[0].triangles[7] = new Triangle(
-                            new Vector3(9, 0, 12),
+                            new Vector3(9, -1, 12),
                             new Vector3(9, h, 12),
                             new Vector3(7, h, 14),
                             Vector3.Normalize(new Vector3(-1, 0, -1)));
@@ -133,6 +133,14 @@ namespace PathTracing
                             new Vector3(9, h, 12),
                             new Vector3(11, h, 14),
                             Vector3.Normalize(new Vector3(0, 1, 0)));
+            //meshes[1] = new Mesh(Vector3.Zero, Vector3.Zero, 1f, "red");
+            //meshes[1].SetMaterial("glass", materials);
+            //meshes[1].triangles = new Triangle[1];
+            //meshes[1].triangles[0] = new Triangle(
+            //                new Vector3(-5, 0, 12),
+            //                new Vector3(0, 8, 12),
+            //                new Vector3(5, 0, 12),
+            //                Vector3.Normalize(new Vector3(0, 0, -1)));
         }
 
         public void LoadCamera()
@@ -275,14 +283,28 @@ namespace PathTracing
 
                         Ray ray = camera.GetRay(row, col);
 
+                        bool hit_transparent_maerial = false;
+                        int additional_samples = 0;
                         Vector3 total_incoming_light = Vector3.Zero;
                         for (int ray_index = 0; ray_index < camera.samples_per_pixel; ray_index++)
                         {
-                            var r = (Ray)ray.Clone();
+                            Ray r = (Ray)ray.Clone();
                             r.Rotate(new Vector3(((float)rnd.NextDouble()*2-1)* camera.ray_deviation, ((float)rnd.NextDouble() * 2 - 1)*camera.ray_deviation, 0));
-                            total_incoming_light += TraceRay(r);
+                            total_incoming_light += TraceRay(r, ref hit_transparent_maerial);
                         }
-                        Vector3 new_color = total_incoming_light / camera.samples_per_pixel;
+
+                        if (hit_transparent_maerial)
+                        {
+                            additional_samples = (int)((float)camera.samples_per_pixel * (camera.SPP_multiplier_for_transparent_materials - 1.0f));
+                            for (int ray_index = 0; ray_index < additional_samples; ray_index++)
+                            {
+                                Ray r = (Ray)ray.Clone();
+                                r.Rotate(new Vector3(((float)rnd.NextDouble() * 2 - 1) * camera.ray_deviation, ((float)rnd.NextDouble() * 2 - 1) * camera.ray_deviation, 0));
+                                total_incoming_light += TraceRay(r, ref hit_transparent_maerial);
+                            }
+                        }
+
+                        Vector3 new_color = total_incoming_light / (camera.samples_per_pixel + additional_samples);
 
                         Vector3 old_color = img_array[row, col];
 
@@ -315,7 +337,7 @@ namespace PathTracing
             progressed = true;
         }
 
-        private Vector3 TraceRay(Ray ray)
+        private Vector3 TraceRay(Ray ray, ref bool hit_transparent_maerial)
         {
             Vector3 ray_color = Vector3.One;
             Vector3 incoming_light = Vector3.Zero;
@@ -325,8 +347,13 @@ namespace PathTracing
                 IntersectionInfo hit = CalculateRayCollision(ray);
                 if (hit.is_intersecting)
                 {
-                    ray.pos = hit.pos;
+                    // Check if the first object the ray hit is transparent
+                    if (reflection == 0)
+                    {
+                        hit_transparent_maerial = hit.material.transparency > 0.0f;
+                    }
 
+                    ray.pos = hit.pos;
 
                     if (hit.material.specular_reflection_probability == 1.0f)
                     {
@@ -479,9 +506,17 @@ namespace PathTracing
             {
                 foreach (Mesh mesh in meshes)
                 {
+                    if (mesh == null) continue;
+
                     foreach (Triangle triangle in mesh.triangles)
                     {
                         if (triangle == null) continue;
+
+                        // If the triangle isn't transparent and the ray hit from behind it should skipped
+                        if (mesh.material.transparency == 0.0f)
+                        {
+                            if (Vector3.Dot(triangle.normal, ray.dir) >= 0.0f) continue;
+                        }
 
                         Vector3 edge_AB = triangle.vertex_B - triangle.vertex_A;
                         Vector3 edge_AC = triangle.vertex_C - triangle.vertex_A;
@@ -489,27 +524,18 @@ namespace PathTracing
                         Vector3 cross_dir_edge2 = Vector3.Cross(ray.dir, edge_AC);
                         float determinant = Vector3.Dot(edge_AB, cross_dir_edge2);
 
-                        if (determinant > -float.Epsilon && determinant < float.Epsilon)
-                        {
-                            continue;
-                        }
+                        if (determinant > -float.Epsilon && determinant < float.Epsilon) continue;
 
                         float inv_determinant = 1.0f / determinant;
                         Vector3 to_origin = ray.pos - triangle.vertex_A;
                         float u = Vector3.Dot(to_origin, cross_dir_edge2) * inv_determinant;
 
-                        if (u < 0.0f || u > 1.0f)
-                        {
-                            continue;
-                        }
+                        if (u < 0.0f || u > 1.0f) continue;
 
                         Vector3 cross_to_origin_edge1 = Vector3.Cross(to_origin, edge_AB);
                         float v = Vector3.Dot(ray.dir, cross_to_origin_edge1) * inv_determinant;
 
-                        if (v < 0.0f || u + v > 1.0f)
-                        {
-                            continue;
-                        }
+                        if (v < 0.0f || u + v > 1.0f) continue;
 
                         distance = Vector3.Dot(edge_AC, cross_to_origin_edge1) * inv_determinant;
                         if (distance > float.Epsilon && distance < info.dis)
