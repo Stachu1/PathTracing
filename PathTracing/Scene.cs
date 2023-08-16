@@ -16,6 +16,8 @@ using System.Timers;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Windows.Forms.DataFormats;
 using System.ComponentModel.Design.Serialization;
+using System.DirectoryServices;
+using System.ComponentModel;
 
 namespace PathTracing
 {
@@ -47,8 +49,9 @@ namespace PathTracing
 
         private JsonSerializerOptions json_opt = new JsonSerializerOptions();
 
-        private Dictionary<string, Material> materials;
-        private List<Sphere> spheres;
+        private Material[] materials;
+        private Sphere[] spheres;
+        private Mesh[] meshes;
 
         public Scene()
         {
@@ -63,6 +66,71 @@ namespace PathTracing
             LoadMaterials();
             LoadSpheres();
             loaded = true;
+
+
+            // To be deleted in later versions
+            AddBox();
+
+        }
+
+        // To be deleted in later versions with STL files suppor
+        private void AddBox()
+        {
+            meshes = new Mesh[1];
+            meshes[0] = new Mesh(Vector3.Zero, Vector3.Zero, 1f, "steel");
+            meshes[0].SetMaterial("steel", materials);
+            float h = 5;
+            meshes[0].triangles = new Triangle[10];
+            meshes[0].triangles[0] = new Triangle(
+                            new Vector3(9, 0, 12),
+                            new Vector3(7, 0, 14),
+                            new Vector3(7, h, 14),
+                            Vector3.Normalize(new Vector3(-1, 0, -1)));
+            meshes[0].triangles[1] = new Triangle(
+                            new Vector3(7, 0, 14),
+                            new Vector3(7, h, 14),
+                            new Vector3(9, 0, 16),
+                            Vector3.Normalize(new Vector3(-1, 0, 1)));
+            meshes[0].triangles[2] = new Triangle(
+                            new Vector3(7, h, 14),
+                            new Vector3(9, h, 16),
+                            new Vector3(9, 0, 16),
+                            Vector3.Normalize(new Vector3(-1, 0, 1)));
+            meshes[0].triangles[3] = new Triangle(
+                            new Vector3(9, 0, 16),
+                            new Vector3(9, h, 16),
+                            new Vector3(11, 0, 14),
+                            Vector3.Normalize(new Vector3(1, 0, 1)));
+            meshes[0].triangles[4] = new Triangle(
+                            new Vector3(9, h, 16),
+                            new Vector3(11, h, 14),
+                            new Vector3(11, 0, 14),
+                            Vector3.Normalize(new Vector3(1, 0, 1)));
+            meshes[0].triangles[5] = new Triangle(
+                            new Vector3(11, 0, 14),
+                            new Vector3(11, h, 14),
+                            new Vector3(9, 0, 12),
+                            Vector3.Normalize(new Vector3(1, 0, -1)));
+            meshes[0].triangles[6] = new Triangle(
+                            new Vector3(9, 0, 12),
+                            new Vector3(9, h, 12),
+                            new Vector3(11, h, 14),
+                            Vector3.Normalize(new Vector3(1, 0, -1)));
+            meshes[0].triangles[7] = new Triangle(
+                            new Vector3(9, 0, 12),
+                            new Vector3(9, h, 12),
+                            new Vector3(7, h, 14),
+                            Vector3.Normalize(new Vector3(-1, 0, -1)));
+            meshes[0].triangles[8] = new Triangle(
+                            new Vector3(7, h, 14),
+                            new Vector3(9, h, 16),
+                            new Vector3(11, h, 14),
+                            Vector3.Normalize(new Vector3(0, 1, 0)));
+            meshes[0].triangles[9] = new Triangle(
+                            new Vector3(7, h, 14),
+                            new Vector3(9, h, 12),
+                            new Vector3(11, h, 14),
+                            Vector3.Normalize(new Vector3(0, 1, 0)));
         }
 
         public void LoadCamera()
@@ -80,7 +148,7 @@ namespace PathTracing
 
         public void LoadMaterials()
         {
-            var potential_materials = JsonSerializer.Deserialize<Dictionary<string, Material>>(File.ReadAllText(@"Scene/Materials.json"), json_opt);
+            var potential_materials = JsonSerializer.Deserialize<Material[]>(File.ReadAllText(@"Scene/Materials.json"), json_opt);
             if (potential_materials != null)
             {
                 materials = potential_materials;
@@ -93,10 +161,16 @@ namespace PathTracing
 
         public void LoadSpheres()
         {
-            var potential_spheres = JsonSerializer.Deserialize<List<Sphere>>(File.ReadAllText(@"Scene/Spheres.json"), json_opt);
+            if (!File.Exists(@"Scene/Spheres.json")) { return; }
+
+            var potential_spheres = JsonSerializer.Deserialize<Sphere[]>(File.ReadAllText(@"Scene/Spheres.json"), json_opt);
             if (potential_spheres != null)
             {
                 spheres = potential_spheres;
+                foreach (Sphere sphere in spheres)
+                {
+                    sphere.SetMaterial(sphere.material_name, materials);
+                }
             } 
             else
             {
@@ -240,7 +314,25 @@ namespace PathTracing
                 {
                     ray.pos = hit.pos;
 
-                    if (hit.material.specular_reflection_probability > rnd.NextDouble() && false)
+
+                    if (hit.material.specular_reflection_probability == 1.0f)
+                    {
+                        // Specular reflection with no color (Coated object)
+                        ray.dir = SpecularReflection(ray.dir, hit.normal);
+                        incoming_light += hit.material.color * hit.material.light_emission * ray_color;
+                        continue;
+                    }
+                    
+                    if (hit.material.specular_reflection_probability == 0.0f)
+                    {
+                        // Normar reflection based on the object material and its color
+                        ray.dir = CalculateReflection(ray.dir, hit.normal, hit.material);
+                        incoming_light += hit.material.color * hit.material.light_emission * ray_color;
+                        ray_color *= hit.material.color;
+                        continue;
+                    }
+
+                    if (hit.material.specular_reflection_probability > rnd.NextDouble())
                     {
                         // Specular reflection with no color (Coated object)
                         ray.dir = SpecularReflection(ray.dir, hit.normal);
@@ -343,36 +435,97 @@ namespace PathTracing
         private IntersectionInfo CalculateRayCollision(Ray ray)
         {
             IntersectionInfo info = new IntersectionInfo();
+            float distance;
 
             // Sphere intersection
-            info.is_intersecting = false;
-            info.dis = 0;
-
-            foreach (Sphere sphere in spheres)
+            if (spheres != null)
             {
-                float a = MathF.Pow(Vector3.Dot(ray.dir, ray.pos - sphere.pos), 2);
-                float b = MathF.Pow(Vector3.Distance(ray.pos, sphere.pos), 2);
-                float c = MathF.Pow(sphere.radius, 2);
-                float discriminant = a - (b - c);
-
-                if (discriminant >= 0)
+                foreach (Sphere sphere in spheres)
                 {
-                    float distance = -(Vector3.Dot(ray.dir, Vector3.Subtract(ray.pos, sphere.pos))) - (float)Math.Sqrt(discriminant);
-                    if (distance >= 0)
+                    float discriminant = GetDiscriminantForSphere(ray, sphere);
+                    if (discriminant >= 0)
                     {
-                        if (distance < info.dis || !info.is_intersecting)
+                        distance = GetDistanceToSphere(ray, sphere, discriminant);
+                        if (distance >= 0)
                         {
-                            info.is_intersecting = true;
-                            info.dis = distance;
-                            info.pos = ray.pos + ray.dir * distance;
-                            info.normal = Vector3.Normalize(info.pos - sphere.pos);
-                            info.material = materials[sphere.material_name];
+                            if (distance < info.dis || !info.is_intersecting)
+                            {
+                                info.is_intersecting = true;
+                                info.dis = distance;
+                                info.pos = ray.pos + ray.dir * distance;
+                                info.normal = Vector3.Normalize(info.pos - sphere.pos);
+                                info.material = sphere.material;
+                            }
                         }
                     }
                 }
             }
 
+            // Mesh intersection
+            if (meshes != null)
+            {
+                foreach (Mesh mesh in meshes)
+                {
+                    foreach (Triangle triangle in mesh.triangles)
+                    {
+                        if (triangle == null) continue;
+
+                        Vector3 edge_AB = triangle.vertex_B - triangle.vertex_A;
+                        Vector3 edge_AC = triangle.vertex_C - triangle.vertex_A;
+
+                        Vector3 cross_dir_edge2 = Vector3.Cross(ray.dir, edge_AC);
+                        float determinant = Vector3.Dot(edge_AB, cross_dir_edge2);
+
+                        if (determinant > -float.Epsilon && determinant < float.Epsilon)
+                        {
+                            continue;
+                        }
+
+                        float inv_determinant = 1.0f / determinant;
+                        Vector3 to_origin = ray.pos - triangle.vertex_A;
+                        float u = Vector3.Dot(to_origin, cross_dir_edge2) * inv_determinant;
+
+                        if (u < 0.0f || u > 1.0f)
+                        {
+                            continue;
+                        }
+
+                        Vector3 cross_to_origin_edge1 = Vector3.Cross(to_origin, edge_AB);
+                        float v = Vector3.Dot(ray.dir, cross_to_origin_edge1) * inv_determinant;
+
+                        if (v < 0.0f || u + v > 1.0f)
+                        {
+                            continue;
+                        }
+
+                        distance = Vector3.Dot(edge_AC, cross_to_origin_edge1) * inv_determinant;
+                        if (distance > float.Epsilon && distance < info.dis)
+                        {
+                            info.is_intersecting = true;
+                            info.dis = distance;
+                            info.pos = ray.pos + ray.dir * distance;
+                            info.normal = triangle.normal;
+                            info.material = mesh.material;
+                        }
+                    }
+                }
+            }
+            
+
             return info;
+        }
+
+        private float GetDistanceToSphere(Ray ray, Sphere sphere, float discriminant)
+        {
+            return -(Vector3.Dot(ray.dir, Vector3.Subtract(ray.pos, sphere.pos))) - (float)Math.Sqrt(discriminant);
+        }
+
+        private float GetDiscriminantForSphere(Ray ray, Sphere sphere)
+        {
+            float a = MathF.Pow(Vector3.Dot(ray.dir, ray.pos - sphere.pos), 2);
+            float b = MathF.Pow(Vector3.Distance(ray.pos, sphere.pos), 2);
+            float c = MathF.Pow(sphere.radius, 2);
+            return a - (b - c);
         }
 
         public void SaveToFile(string path, Vector3[,] array)

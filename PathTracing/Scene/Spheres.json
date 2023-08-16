@@ -6,7 +6,7 @@
       20
     ],
     "radius": 3,
-    "material_name": "red"
+    "material_name": "smooth_red"
   },
   {
     "pos": [
@@ -15,7 +15,7 @@
       20
     ],
     "radius": 3,
-    "material_name": "green"
+    "material_name": "smooth_green"
   },
   {
     "pos": [
@@ -24,7 +24,7 @@
       20
     ],
     "radius": 3,
-    "material_name": "blue"
+    "material_name": "smooth_blue"
   },
   {
     "pos": [
@@ -109,7 +109,7 @@
   },
   {
     "pos": [
-      6,
+      4,
       2,
       15
     ],

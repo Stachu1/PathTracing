@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
-using System.Numerics;
-
 
 namespace PathTracing
 {
-    internal class Sphere
+    internal class Mesh
     {
         public Vector3 pos { get; set; }
-        public float radius { get; set; }
+        public Vector3 rotation { get; set; }
+        public float scale { get; set; }
         public string? material_name { get; set; }
         public Material? material;
+        public Triangle[]? raw_triangles;
+        public Triangle[]? triangles;
 
-        public Sphere(Vector3 pos, float radius, string? material_name)
+        public Mesh(Vector3 pos, Vector3 rotation, float scale, string? material_name)
         {
             this.pos = pos;
-            this.radius = radius;
+            this.rotation = rotation;
+            this.scale = scale;
             this.material_name = material_name;
         }
 
