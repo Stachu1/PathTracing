@@ -69,7 +69,7 @@ namespace PathTracing
         {
             do_reset = true;
             scene.abort_render = true;
-            this.Text = $"Path Tracing";
+            this.Text = "Path Tracing";
         }
 
 
@@ -101,7 +101,7 @@ namespace PathTracing
                 {
                     scene.rendering = false;
                     // Auto save with no gamma correction
-                    scene.SaveToFile($"Renders\\NoGamma_{scene.camera.samples_per_pixel * scene.total_iterations}SPP.bmp", scene.img_array);
+                    scene.SaveToFile(@$"Renders/NoGamma_{scene.camera.samples_per_pixel * scene.total_iterations}SPP_{scene.total_iterations}TI.png", scene.img_array);
                 }
             }
             else
@@ -176,11 +176,11 @@ namespace PathTracing
                 string path;
                 if (FileNameTextBox.Text.Contains("."))
                 {
-                    path = $"Renders\\{FileNameTextBox.Text}";
+                    path = @$"Renders/{FileNameTextBox.Text}";
                 }
                 else
                 {
-                    path = $"Renders\\{FileNameTextBox.Text}.bmp";
+                    path = @$"Renders/{FileNameTextBox.Text}.png";
                 }
 
                 // Save file with gamma correction applyed
@@ -197,13 +197,13 @@ namespace PathTracing
         private void LoadButton_Click(object sender, EventArgs e)
         {
             string path;
-            if (FileNameTextBox.Text.Contains(".bmp"))
+            if (FileNameTextBox.Text.Contains(".png"))
             {
-                path = $"Renders\\{FileNameTextBox.Text}";
+                path = @$"Renders/{FileNameTextBox.Text}";
             }
             else
             {
-                path = $"Renders\\{FileNameTextBox.Text}.bmp";
+                path = @$"Renders/{FileNameTextBox.Text}.png";
             }
             scene.LoadFromFile(path);
         }

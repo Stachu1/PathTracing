@@ -5,5 +5,6 @@
   "FOV": 75.0,
   "gamma": 1.8,
   "ray_deviation": 0.002,
-  "samples_per_pixel": 10
+  "samples_per_pixel": 10,
+  "SPP_multiplier_for_transparent_materials":  5.0
 }

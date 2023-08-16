@@ -18,6 +18,9 @@ using static System.Windows.Forms.DataFormats;
 using System.ComponentModel.Design.Serialization;
 using System.DirectoryServices;
 using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.Reflection;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace PathTracing
 {
@@ -584,6 +587,7 @@ namespace PathTracing
 
                     using (Bitmap bmp = new Bitmap(bmp_og, camera.resolution))
                     {
+
                         for (int row = 0; row < bmp.Size.Height; row++)
                         {
                             for (int col = 0; col < bmp.Size.Width; col++)
@@ -595,6 +599,8 @@ namespace PathTracing
                         }
                     }
                 }
+                string[] ti = path.Split("TI")[0].Split("_");
+                int.TryParse(ti[ti.Length - 1], out total_iterations);
                 img_to_show = ArrayToImage(ApplyGammaCorrection(img_array, camera.gamma));
                 img_changed = true;
             }

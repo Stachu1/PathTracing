@@ -130,7 +130,7 @@
             FileNameTextBox.Name = "FileNameTextBox";
             FileNameTextBox.Size = new Size(270, 23);
             FileNameTextBox.TabIndex = 7;
-            FileNameTextBox.Text = "Render.bmp";
+            FileNameTextBox.Text = "Render.png";
             // 
             // MaxReflectionsnumericUpDown
             // 
