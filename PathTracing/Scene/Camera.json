@@ -1,9 +1,9 @@
 {
   "pos": [ 0.0, 10.0, -3.0 ],
   "rotation": [ 0.0, -12.0, 0.0 ],
-  "resolution": [ 1280, 720 ],
+  "resolution": [ 400, 225 ],
   "FOV": 75.0,
   "gamma": 1.8,
   "ray_deviation": 0.002,
-  "samples_per_pixel": 100
+  "samples_per_pixel": 10
 }

@@ -80,7 +80,7 @@ namespace PathTracing
         {
             meshes = new Mesh[1];
             meshes[0] = new Mesh(Vector3.Zero, Vector3.Zero, 1f, "steel");
-            meshes[0].SetMaterial("steel", materials);
+            meshes[0].SetMaterial("glass", materials);
             float h = 5;
             meshes[0].triangles = new Triangle[10];
             meshes[0].triangles[0] = new Triangle(
@@ -196,20 +196,21 @@ namespace PathTracing
 
         public Vector3[,] ApplyGammaCorrection(Vector3[,] array, float gamma)
         {
+            Vector3[,] array_clone = (Vector3[,])array.Clone();
             float inverter_gamma = 1f / gamma;
-            int num_rows = array.GetLength(0);
-            int num_cols = array.GetLength(1);
+            int num_rows = array_clone.GetLength(0);
+            int num_cols = array_clone.GetLength(1);
             Parallel.For(0, num_rows, row =>
             {
                 for (int col = 0; col < num_cols; col++)
                 {
-                    array[row, col] = new Vector3(
-                        MathF.Pow(array[row, col].X, inverter_gamma), 
-                        MathF.Pow(array[row, col].Y, inverter_gamma), 
-                        MathF.Pow(array[row, col].Z, inverter_gamma));
+                    array_clone[row, col] = new Vector3(
+                        MathF.Pow(array_clone[row, col].X, inverter_gamma), 
+                        MathF.Pow(array_clone[row, col].Y, inverter_gamma), 
+                        MathF.Pow(array_clone[row, col].Z, inverter_gamma));
                 }
             });
-            return array;
+            return array_clone;
         }
 
         public Bitmap ArrayToImage(Vector3[,] array)
@@ -308,7 +309,7 @@ namespace PathTracing
             render_progress = 1;
 
             // Show final image with gamma correction
-            img_to_show = ArrayToImage(ApplyGammaCorrection((Vector3[,])img_array.Clone(), camera.gamma));
+            img_to_show = ArrayToImage(ApplyGammaCorrection(img_array, camera.gamma));
             img_changed = true;
             eta = 0;
             progressed = true;
@@ -568,7 +569,7 @@ namespace PathTracing
                         }
                     }
                 }
-                img_to_show = ArrayToImage(ApplyGammaCorrection((Vector3[,])img_array.Clone(), camera.gamma));
+                img_to_show = ArrayToImage(ApplyGammaCorrection(img_array, camera.gamma));
                 img_changed = true;
             }
         }
