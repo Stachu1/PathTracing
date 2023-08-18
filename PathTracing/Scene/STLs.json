@@ -1,0 +1,17 @@
+[
+  {
+    "pos": [
+      0,
+      10,
+      0
+    ],
+    "rotation": [
+      45,
+      0,
+      0
+    ],
+    "scale": 1.0,
+    "path": "Scene/STLs/pyramid.stl",
+    "material_name": "red"
+  }
+]

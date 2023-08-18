@@ -1,137 +1,20 @@
 [
   {
     "pos": [
-      -10,
-      3,
-      20
-    ],
-    "radius": 3,
-    "material_name": "smooth_red"
-  },
-  {
-    "pos": [
-      0,
-      3,
-      20
-    ],
-    "radius": 3,
-    "material_name": "smooth_green"
-  },
-  {
-    "pos": [
-      10,
-      3,
-      20
-    ],
-    "radius": 3,
-    "material_name": "smooth_blue"
-  },
-  {
-    "pos": [
-      5,
-      2,
-      22
-    ],
-    "radius": 2,
-    "material_name": "glowing_white"
-  },
-  {
-    "pos": [
-      -5,
-      2,
-      22
-    ],
-    "radius": 2,
-    "material_name": "glowing_white"
-  },
-  {
-    "pos": [
-      -5,
-      10,
-      25
-    ],
-    "radius": 4,
-    "material_name": "mirror"
-  },
-  {
-    "pos": [
-      5,
-      10,
-      25
-    ],
-    "radius": 4,
-    "material_name": "mirror"
-  },
-  {
-    "pos": [
       0,
       -10000,
-      15
+      0
     ],
     "radius": 10000,
     "material_name": "white"
   },
   {
     "pos": [
-      100,
-      150,
-      0
+      300,
+      300,
+      -300
     ],
-    "radius": 100,
+    "radius": 400,
     "material_name": "glowing_white"
-  },
-  {
-    "pos": [
-      9,
-      7,
-      14
-    ],
-    "radius": 2,
-    "material_name": "gold"
-  },
-  {
-    "pos": [
-      17,
-      10,
-      25
-    ],
-    "radius": 4,
-    "material_name": "copper"
-  },
-  {
-    "pos": [
-      -5,
-      2,
-      15
-    ],
-    "radius": 2,
-    "material_name": "glass"
-  },
-  {
-    "pos": [
-      3,
-      2,
-      16
-    ],
-    "radius": 2,
-    "material_name": "glass"
-  },
-  {
-    "pos": [
-      -11,
-      1,
-      17
-    ],
-    "radius": 1,
-    "material_name": "glowing_white"
-  },
-  {
-    "pos": [
-      -20,
-      5,
-      30
-    ],
-    "radius": 5,
-    "material_name": "steel"
   }
 ]

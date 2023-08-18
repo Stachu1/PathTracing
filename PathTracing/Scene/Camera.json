@@ -1,10 +1,10 @@
 {
-  "pos": [ 0.0, 10.0, -3.0 ],
-  "rotation": [ 0.0, -12.0, 0.0 ],
+  "pos": [ 0.0, 30.0, -40.0 ],
+  "rotation": [ 0.0, -15.0, 0.0 ],
   "resolution": [ 400, 225 ],
-  "FOV": 75.0,
+  "FOV": 90.0,
   "gamma": 1.8,
   "ray_deviation": 0.002,
   "samples_per_pixel": 10,
-  "SPP_multiplier_for_transparent_materials":  5.0
+  "SPP_multiplier_for_transparent_materials":  3.0
 }

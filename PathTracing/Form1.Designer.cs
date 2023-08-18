@@ -125,8 +125,8 @@
             FileNameTextBox.BorderStyle = BorderStyle.None;
             FileNameTextBox.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point);
             FileNameTextBox.ForeColor = Color.White;
-            FileNameTextBox.Location = new Point(6, 822);
-            FileNameTextBox.Margin = new Padding(3, 4, 3, 4);
+            FileNameTextBox.Location = new Point(6, 823);
+            FileNameTextBox.Margin = new Padding(6);
             FileNameTextBox.Name = "FileNameTextBox";
             FileNameTextBox.Size = new Size(270, 23);
             FileNameTextBox.TabIndex = 7;

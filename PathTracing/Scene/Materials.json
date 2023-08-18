@@ -156,6 +156,19 @@
     "light_emission": 2
   },
   {
+    "name": "bright_glowing_white",
+    "color": [
+      0.8,
+      0.8,
+      0.8
+    ],
+    "smoothness": 0,
+    "specular_reflection_probability": 0,
+    "transparency": 0,
+    "refractivity": 1,
+    "light_emission": 20
+  },
+  {
     "name": "sun",
     "color": [
       0.8,

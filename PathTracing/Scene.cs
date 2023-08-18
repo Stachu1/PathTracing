@@ -70,83 +70,11 @@ namespace PathTracing
             FillArray(ref img_array, Vector3.Zero);
             LoadMaterials();
             LoadSpheres();
+            LoadSTLs();
             loaded = true;
-
-
-            // To be deleted in later versions
-            AddBox();
-
         }
 
-        // To be deleted in later versions with STL files suppor
-        private void AddBox()
-        {
-            meshes = new Mesh[2];
-            meshes[0] = new Mesh(Vector3.Zero, Vector3.Zero, 1f, "steel");
-            meshes[0].SetMaterial("red", materials);
-            float h = 5;
-            meshes[0].triangles = new Triangle[10];
-            meshes[0].triangles[0] = new Triangle(
-                            new Vector3(9, -1, 12),
-                            new Vector3(7, -1, 14),
-                            new Vector3(7, h, 14),
-                            Vector3.Normalize(new Vector3(-1, 0, -1)));
-            meshes[0].triangles[1] = new Triangle(
-                            new Vector3(7, -1, 14),
-                            new Vector3(7, h, 14),
-                            new Vector3(9, -1, 16),
-                            Vector3.Normalize(new Vector3(-1, 0, 1)));
-            meshes[0].triangles[2] = new Triangle(
-                            new Vector3(7, h, 14),
-                            new Vector3(9, h, 16),
-                            new Vector3(9, -1, 16),
-                            Vector3.Normalize(new Vector3(-1, 0, 1)));
-            meshes[0].triangles[3] = new Triangle(
-                            new Vector3(9, -1, 16),
-                            new Vector3(9, h, 16),
-                            new Vector3(11, -1, 14),
-                            Vector3.Normalize(new Vector3(1, 0, 1)));
-            meshes[0].triangles[4] = new Triangle(
-                            new Vector3(9, h, 16),
-                            new Vector3(11, h, 14),
-                            new Vector3(11, -1, 14),
-                            Vector3.Normalize(new Vector3(1, 0, 1)));
-            meshes[0].triangles[5] = new Triangle(
-                            new Vector3(11, -1, 14),
-                            new Vector3(11, h, 14),
-                            new Vector3(9, -1, 12),
-                            Vector3.Normalize(new Vector3(1, 0, -1)));
-            meshes[0].triangles[6] = new Triangle(
-                            new Vector3(9, -1, 12),
-                            new Vector3(9, h, 12),
-                            new Vector3(11, h, 14),
-                            Vector3.Normalize(new Vector3(1, 0, -1)));
-            meshes[0].triangles[7] = new Triangle(
-                            new Vector3(9, -1, 12),
-                            new Vector3(9, h, 12),
-                            new Vector3(7, h, 14),
-                            Vector3.Normalize(new Vector3(-1, 0, -1)));
-            meshes[0].triangles[8] = new Triangle(
-                            new Vector3(7, h, 14),
-                            new Vector3(9, h, 16),
-                            new Vector3(11, h, 14),
-                            Vector3.Normalize(new Vector3(0, 1, 0)));
-            meshes[0].triangles[9] = new Triangle(
-                            new Vector3(7, h, 14),
-                            new Vector3(9, h, 12),
-                            new Vector3(11, h, 14),
-                            Vector3.Normalize(new Vector3(0, 1, 0)));
-            //meshes[1] = new Mesh(Vector3.Zero, Vector3.Zero, 1f, "red");
-            //meshes[1].SetMaterial("glass", materials);
-            //meshes[1].triangles = new Triangle[1];
-            //meshes[1].triangles[0] = new Triangle(
-            //                new Vector3(-5, 0, 12),
-            //                new Vector3(0, 8, 12),
-            //                new Vector3(5, 0, 12),
-            //                Vector3.Normalize(new Vector3(0, 0, -1)));
-        }
-
-        public void LoadCamera()
+        private void LoadCamera()
         {
             var potential_camera = JsonSerializer.Deserialize<Camera>(File.ReadAllText(@"Scene/Camera.json"), json_opt);
             if (potential_camera != null)
@@ -159,9 +87,9 @@ namespace PathTracing
             }
         }
 
-        public void LoadMaterials()
+        private void LoadMaterials()
         {
-            var potential_materials = JsonSerializer.Deserialize<Material[]>(File.ReadAllText(@"Scene/Materials.json"), json_opt);
+            Material[] potential_materials = JsonSerializer.Deserialize<Material[]>(File.ReadAllText(@"Scene/Materials.json"), json_opt);
             if (potential_materials != null)
             {
                 materials = potential_materials;
@@ -172,11 +100,11 @@ namespace PathTracing
             }
         }
 
-        public void LoadSpheres()
+        private void LoadSpheres()
         {
             if (!File.Exists(@"Scene/Spheres.json")) { return; }
 
-            var potential_spheres = JsonSerializer.Deserialize<Sphere[]>(File.ReadAllText(@"Scene/Spheres.json"), json_opt);
+            Sphere[] potential_spheres = JsonSerializer.Deserialize<Sphere[]>(File.ReadAllText(@"Scene/Spheres.json"), json_opt);
             if (potential_spheres != null)
             {
                 spheres = potential_spheres;
@@ -188,6 +116,24 @@ namespace PathTracing
             else
             {
                 throw new Exception("Failed to load spheres!");
+            }
+        }
+
+        private void LoadSTLs()
+        {
+            Mesh[] potential_meshes = JsonSerializer.Deserialize<Mesh[]>(File.ReadAllText(@"Scene/STLs.json"), json_opt);
+            if (potential_meshes != null)
+            {
+                meshes = potential_meshes;
+                foreach (Mesh mesh in meshes)
+                {
+                    mesh.SetMaterial(mesh.material_name, materials);
+                    mesh.LoadFromSTL(mesh.path);
+                }
+            }
+            else
+            {
+                throw new Exception("Failed to load camera!");
             }
         }
 
@@ -541,7 +487,10 @@ namespace PathTracing
                         if (v < 0.0f || u + v > 1.0f) continue;
 
                         distance = Vector3.Dot(edge_AC, cross_to_origin_edge1) * inv_determinant;
-                        if (distance > float.Epsilon && distance < info.dis)
+
+                        if (distance <= float.Epsilon) continue;
+
+                        if (distance < info.dis || !info.is_intersecting)
                         {
                             info.is_intersecting = true;
                             info.dis = distance;
