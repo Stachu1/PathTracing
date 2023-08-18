@@ -348,7 +348,7 @@ namespace PathTracing
         {   
             if (material.transparency > (float)rnd.NextDouble())
             {
-                return SpecularRefraction(ray_dir, normal, material.refractivity);
+                return SpecularRefraction(ray_dir, normal, material.refractive_index);
             }
             else
             {
@@ -358,7 +358,7 @@ namespace PathTracing
             }
         }
 
-        private Vector3 SpecularRefraction(Vector3 vec, Vector3 norm, float material_refractivity)
+        private Vector3 SpecularRefraction(Vector3 vec, Vector3 norm, float material_r_index)
         {
             // Ray is exiting the object
             float dot = Vector3.Dot(vec, norm);
@@ -369,13 +369,13 @@ namespace PathTracing
             // Ray is entering the object
             if (dot < 0)
             {
-                eta = 1f / material_refractivity;
+                eta = 1f / material_r_index;
                 cos_theta1 = Vector3.Dot(-vec, norm);
             }
             // Ray is exiting the object
             else
             {
-                eta = material_refractivity;
+                eta = material_r_index;
                 cos_theta1 = Vector3.Dot(vec, norm);
                 norm = -norm;
             }

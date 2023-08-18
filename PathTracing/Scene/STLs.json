@@ -2,16 +2,33 @@
   {
     "pos": [
       0,
-      10,
+      12.125,
       0
     ],
     "rotation": [
-      45,
+      30,
       0,
       0
     ],
     "scale": 1.0,
-    "path": "Scene/STLs/pyramid.stl",
-    "material_name": "red"
+    "path": "Scene/STLs/ring.stl",
+    "material_name": "gold"
+  },
+  {
+    "pos": [
+      0,
+      27.25,
+      0
+    ],
+    "rotation": [
+      30,
+      0,
+      0
+    ],
+    "scale": 1.0,
+    "path": "Scene/STLs/diamond.stl",
+    "material_name": "diamond"
   }
+
+
 ]

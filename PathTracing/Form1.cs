@@ -97,7 +97,7 @@ namespace PathTracing
             if (scene.rendering)
             {
                 progressBar1.Value = (int)(scene.render_progress * 100);
-                if (progressBar1.Value == 100)
+                if (scene.render_progress == 1f)
                 {
                     scene.rendering = false;
                     // Auto save with no gamma correction

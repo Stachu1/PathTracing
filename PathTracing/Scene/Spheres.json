@@ -2,19 +2,46 @@
   {
     "pos": [
       0,
-      -10000,
+      -100000,
       0
     ],
-    "radius": 10000,
-    "material_name": "white"
+    "radius": 100000,
+    "material_name": "smooth_white"
   },
   {
     "pos": [
-      300,
-      300,
-      -300
+      0,
+      0,
+      100020
+    ],
+    "radius": 100000,
+    "material_name": "mirror"
+  },
+  {
+    "pos": [
+      500,
+      500,
+      -200
     ],
     "radius": 400,
     "material_name": "glowing_white"
+  },
+  {
+    "pos": [
+      -200,
+      50,
+      -150
+    ],
+    "radius": 50,
+    "material_name": "glowing_white"
+  },
+  {
+    "pos": [
+      -0,
+      30,
+      10
+    ],
+    "radius": 5,
+    "material_name": "glass"
   }
 ]
