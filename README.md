@@ -1,13 +1,17 @@
 # PathTracing
 My second attempt at making a graphics engine. This time, I chose to use C#.
-Rendring runs on the CPU, but on all cores, which makes it just a bit faster.
-There is support for Sheres and STL files (the binary ones).
 <br>
+Rendring runs on the CPU, but on all cores, which makes it slightly faster.
+<br>
+Sheres and STL files (the binary ones) are supported.
+<br>
+<br>
+
 ## Download
 ```bash
 git clone https://github.com/Stachu1/PathTracing.git
 ```
-
+<br>
 <br>
 
 ## Usage
@@ -23,6 +27,7 @@ git clone https://github.com/Stachu1/PathTracing.git
 
 <img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/3ad37c9a-19c6-45c5-ba97-7163531e7d88">
 
+<br>
 <br>
 
 ## Configuration
@@ -108,6 +113,7 @@ Refractive index controls how much light is refracted in the material (only for 
   }
 ]
 ```
+<br>
 <br>
 
 ## Renders
