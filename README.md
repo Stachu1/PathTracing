@@ -28,6 +28,7 @@ git clone https://github.com/Stachu1/PathTracing.git
 ## Configuration
 All the configuraton can be done within four files: Camera.json, Materials.json, Spheres.json, STLs.json
 <br>
+<br>
 **Camera**
 ```json
 {
@@ -46,7 +47,9 @@ The last value allows you to set a multiplier for transparent objects, as they g
 <br>
 
 **Materials**
+<br>
 Specular reflection gives a glazing effect.
+<br>
 Refractive index controls how much light is refracted in the material (only for transparent materials).
 ```json
 [
@@ -113,3 +116,4 @@ Refractive index controls how much light is refracted in the material (only for 
 <img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/15fff91f-db3a-4dd8-a24e-010937f6a85c">
 <img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/8b937ce1-1b98-47ad-a8a4-a2fc81586df6">
 <img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/ce1681bf-1131-4a0c-8653-8107caa708ff">
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/92131b41-48b9-4535-896e-7c4f86521ff5">
