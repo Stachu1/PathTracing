@@ -12,10 +12,15 @@ git clone https://github.com/Stachu1/PathTracing.git
 
 ## Usage
 **1. Open with VS**
+<br>
 **2. Compile**
+<br>
 **3. Be sure to move the "Scene" folder to the same location as the main executable (PathTracing\PathTracing\bin\Debug\net7.0-windows\)**
+<br>
 **4. Restart the program**
+<br>
 **5. RENDER**
+
 ![image](https://github.com/Stachu1/PathTracing/assets/77758413/3ad37c9a-19c6-45c5-ba97-7163531e7d88)
 
 <br>
@@ -103,5 +108,5 @@ Refractive index controls how much light is refracted in the material (only for 
 <br>
 
 ## Renders
-![GH_demo](https://github.com/Stachu1/PathTracing/assets/77758413/8a031b9c-66bb-4131-9bf7-033325c26c91)
-![Ring_redner](https://github.com/Stachu1/PathTracing/assets/77758413/b1977560-647a-459c-a6eb-98d0560f09a8)
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/8a031b9c-66bb-4131-9bf7-033325c26c91">
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/b1977560-647a-459c-a6eb-98d0560f09a8">
