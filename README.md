@@ -19,9 +19,9 @@ git clone https://github.com/Stachu1/PathTracing.git
 <br>
 **4. Restart the program**
 <br>
-**5. RENDER**
+**5. RENDER!**
 
-![image](https://github.com/Stachu1/PathTracing/assets/77758413/3ad37c9a-19c6-45c5-ba97-7163531e7d88)
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/3ad37c9a-19c6-45c5-ba97-7163531e7d88">
 
 <br>
 
@@ -48,7 +48,7 @@ The last value allows you to set a multiplier for transparent objects, as they g
 **Materials**
 Specular reflection gives a glazing effect.
 Refractive index controls how much light is refracted in the material (only for transparent materials).
-```bash
+```json
 [
   {
     "name": "smooth_green",
@@ -69,7 +69,7 @@ Refractive index controls how much light is refracted in the material (only for 
 <br>
 
 **Spheres**
-```bash
+```json
 [
  {
     "pos": [
@@ -86,7 +86,7 @@ Refractive index controls how much light is refracted in the material (only for 
 <br>
 
 **STLs**
-```bash
+```json
 [
   {
     "pos": [
@@ -110,3 +110,6 @@ Refractive index controls how much light is refracted in the material (only for 
 ## Renders
 <img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/8a031b9c-66bb-4131-9bf7-033325c26c91">
 <img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/b1977560-647a-459c-a6eb-98d0560f09a8">
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/15fff91f-db3a-4dd8-a24e-010937f6a85c">
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/8b937ce1-1b98-47ad-a8a4-a2fc81586df6">
+<img width="1000" alt="image" src="https://github.com/Stachu1/PathTracing/assets/77758413/ce1681bf-1131-4a0c-8653-8107caa708ff">
